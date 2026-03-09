@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Azis Zikr — Digital Tasbih</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#c9a84c">
+    <meta name="description" content="A beautiful digital tasbih and Zikr counter for daily ibadah.">
+</head>
+
+<body>
+
+    <div id="splash">
+        <img src="assets/icons/icon-512.png" alt="Azis Zikr">
+        <div class="splash-title">AZIS ZIKR</div>
+        <div class="splash-arabic">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+        <div class="splash-bar">
+            <div class="splash-fill"></div>
+        </div>
+    </div>
+    <script>
+        // Inline kill — runs before anything else loads
+        (function () {
+            function killSplash() {
+                var s = document.getElementById('splash');
+                if (!s) return;
+                s.style.transition = 'opacity 0.4s ease';
+                s.style.opacity = '0';
+                s.style.pointerEvents = 'none';
+                setTimeout(function () { if (s.parentNode) s.parentNode.removeChild(s); }, 450);
+            }
+            // Kill after 700ms max — show briefly then gone
+            setTimeout(killSplash, 700);
+            // Also kill the moment DOM is ready
+            document.addEventListener('DOMContentLoaded', function () { setTimeout(killSplash, 100); });
+        })();
+    </script>
+
+    <canvas id="particles"></canvas>
+    <video id="bgVideo" autoplay muted loop playsinline onerror="this.style.display='none'">
+        <source src="assets/video/background.mp4" type="video/mp4">
+    </video>
+    <div class="page-overlay"></div>
+
+    <audio id="bgAudio" loop preload="none">
+        <source src="assets/audio/nasheed.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="clickAudio" preload="auto">
+        <source src="assets/audio/click.mp3" type="audio/mpeg">
+    </audio>
+
+    <header class="header" id="siteHeader">
+        <div class="header-inner">
+            <a href="index.html" class="logo">
+                <img src="assets/logo.svg" alt="">
+                <div class="logo-text"><span class="brand">Azis Zikr</span><span class="tagline">Digital Tasbih</span>
+                </div>
+            </a>
+            <nav class="nav" id="navMenu">
+                <a href="index.html">🏠 Zikr</a>
+                <a href="quran.html">📖 Quran</a>
+                <a href="prayer.html">🕌 Prayer</a>
+                <a href="stats.html">📊 Stats</a>
+                <a href="duas.html">🤲 Duas</a>
+                <a href="about.html">💫 About</a>
+            </nav>
+            <div class="hdr-right">
+                <button class="icon-btn" id="themeBtn" title="Toggle theme">🌙</button>
+                <button class="icon-btn" id="soundBtn" title="Nasheed">🔇</button>
+                <button class="hamburger" id="ham" aria-label="Menu"><span></span><span></span><span></span></button>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <img src="assets/logo1.png" alt="Azis Zikr" class="hero-logo">
+        <h1 class="hero-bismillah">🤍 بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ 🤍</h1>
+        <p class="hero-sub">Your peaceful companion for daily remembrance of Allah ﷻ</p>
+
+        <div class="stats-row">
+            <div class="stat-pill"><span class="icon">📿</span>
+                <div>
+                    <div class="val" id="totalCount">0</div>
+                    <div class="lbl">Total Zikr</div>
+                </div>
+            </div>
+            <div class="stat-pill"><span class="icon">🔥</span>
+                <div>
+                    <div class="val" id="streakCount">0</div>
+                    <div class="lbl">Day Streak</div>
+                </div>
+            </div>
+            <div class="stat-pill"><span class="icon">🌙</span>
+                <div>
+                    <div class="val" id="todayCount">0</div>
+                    <div class="lbl">Today</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TASBIH RING -->
+        <div class="tasbih-section">
+            <div class="tasbih-ring">
+                <svg class="tasbih-svg" viewBox="0 0 170 170">
+                    <defs>
+                        <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#c9a84c" />
+                            <stop offset="100%" stop-color="#00e8a2" />
+                        </linearGradient>
+                    </defs>
+                    <circle class="track" cx="85" cy="85" r="80" />
+                    <circle class="fill" id="ringFill" cx="85" cy="85" r="80" />
+                </svg>
+                <button id="tasbihBtn"><span id="tasbihNum">0</span></button>
+            </div>
+            <div class="tasbih-meta">
+                <div class="tasbih-name" id="tasbihName">Subhanallah</div>
+                <div class="tasbih-progress-txt" id="tasbihProg">0 / 33 — tap the ring</div>
+            </div>
+            <div class="tasbih-targets" id="targetChips">
+                <button class="t-chip on" data-t="33">33×</button>
+                <button class="t-chip" data-t="99">99×</button>
+                <button class="t-chip" data-t="100">100×</button>
+                <button class="t-chip" data-t="1000">1000×</button>
+            </div>
+            <div class="tasbih-row">
+                <select class="tasbih-select" id="tasbihSel">
+                    <option>Subhanallah</option>
+                    <option>Alhamdulillah</option>
+                    <option>Allahu Akbar</option>
+                    <option>La ilaha illallah</option>
+                    <option>Astagfirullah</option>
+                    <option>Darood Shareef</option>
+                    <option>Kalma Shareef</option>
+                    <option>Surah Falak</option>
+                    <option>Surah Naas</option>
+                    <option>Surah Kausar</option>
+                    <option>Surah Ikhlas</option>
+                    <option>Surah Rahman</option>
+                    <option>Surah Muzammil</option>
+                    <option>Surah Al Nasr</option>
+
+                </select>
+                <button class="btn btn-ghost btn-sm" id="tasbihReset">↺ Reset</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ACTION BUTTONS -->
+    <div class="page-wrap" style="display:flex;flex-direction:column;gap:10px;padding-top:0">
+        <button class="btn btn-gold btn-block" id="notifyBtn">🔔 Enable Daily Reminder</button>
+        <button class="btn btn-ghost btn-block" id="installBtn" style="display:none">📲 Install App</button>
+    </div>
+
+    <!-- AYAH -->
+    <div class="page-wrap">
+        <div class="sec-head">
+            <h2>✨ Ayah of the Day</h2>
+        </div>
+        <div class="ayah-card" id="ayahCard">
+            <div class="ayah-arabic" id="ayahAr"></div>
+            <div class="ayah-en" id="ayahEn"></div>
+            <div class="ayah-ref" id="ayahRef"></div>
+            <div class="ayah-nav">
+                <button class="btn btn-ghost btn-sm" id="prevAyah">← Prev</button>
+                <button class="btn btn-ghost btn-sm" id="nextAyah">Next →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRAYER TIMES -->
+    <div class="page-wrap">
+        <div class="sec-head">
+            <h2>🕌 Prayer Times</h2>
+        </div>
+        <div class="prayer-card">
+            <div class="prayer-head">
+                <h3>Today's Salah</h3>
+                <div class="prayer-loc" id="prayerLoc">📍 Jabalpur, Madhya Pradesh</div>
+                <div class="prayer-countdown" id="prayerCD"></div>
+            </div>
+            <div class="prayer-rows" id="prayerList">
+                <div class="prayer-row"><span class="prayer-icon">⏳</span><span class="prayer-name">Loading…</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ZIKR SECTIONS -->
+    <div class="page-wrap">
+        <div class="sec-head">
+            <h2>📿 Zikr Counter</h2>
+            <p>Tap a card to expand — all counts saved automatically</p>
+        </div>
+        <div class="zikr-list" id="zikrList"></div>
+    </div>
+
+    <!-- STREAK -->
+    <div class="page-wrap">
+        <div class="sec-head">
+            <h2>🗓️ This Week</h2>
+        </div>
+        <div class="streak-card">
+            <div class="streak-top">
+                <h3>Daily Streak</h3><span class="streak-flame">🔥 <span id="streakNum">0</span></span>
+            </div>
+            <div class="week-grid" id="weekGrid"></div>
+        </div>
+    </div>
+
+    <div id="netStatus"></div>
+
+    <footer class="footer">
+        <div class="footer-ticker">
+            <div class="footer-track" id="footerTrack">
+                <span>🤍 Remember Allah — <em>He remembers you</em></span>
+                <span>📿 Azis Zikr • Simple • Peaceful • Pure</span>
+                <span>🌙 Daily Zikr brings <em>inner peace</em></span>
+                <span>🕌 No Ads • No Tracking • <em>Only Ibadah</em></span>
+                <span>✨ Made with love for the <em>Ummah</em></span>
+                <span>💌 Luxury invitations: <em><a href="/cdn-cgi/l/email-protection" class="__cf_email__"
+                            data-cfemail="c8a9b2a1bba1a6bea1bcadbb88afa5a9a1a4e6aba7a5">[email&#160;protected]</a></em></span>
+                <span>🤍 Remember Allah — <em>He remembers you</em></span>
+                <span>📿 Azis Zikr • Simple • Peaceful • Pure</span>
+                <span>🌙 Daily Zikr brings <em>inner peace</em></span>
+                <span>🕌 No Ads • No Tracking • <em>Only Ibadah</em></span>
+                <span>✨ Made with love for the <em>Ummah</em></span>
+                <span>💌 Luxury invitations: <em>azisinvites@gmail.com</em></span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script src="js/index.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,94 @@
+<svg viewBox="0 0 300 300" width="260" height="260"
+    xmlns="http://www.w3.org/2000/svg">
+
+    <defs>
+        <!-- GOLD MOON GRADIENT -->
+        <radialGradient id="goldMoon">
+            <stop offset="0%" stop-color="#fff9e6" />
+            <stop offset="65%" stop-color="#d4af37" />
+            <stop offset="100%" stop-color="#4a3b0d" />
+        </radialGradient>
+
+        <!-- SOFT GLOW -->
+        <filter id="softGlow">
+            <feGaussianBlur stdDeviation="7" />
+        </filter>
+    </defs>
+
+    <!-- OUTER LUXURY HALO -->
+    <circle cx="150" cy="150" r="105"
+        fill="none"
+        stroke="#d4af37"
+        stroke-width="2"
+        opacity="0.45">
+        <animateTransform
+            type="rotate"
+            from="0 150 150"
+            to="360 150 150"
+            dur="40s"
+            repeatCount="indefinite" />
+    </circle>
+
+    <!-- FULL MOON BASE -->
+    <circle cx="150" cy="150" r="50"
+        fill="url(#goldMoon)"
+        filter="url(#softGlow)">
+        <animateTransform
+            type="scale"
+            values="1;1.05;1"
+            dur="6s"
+            repeatCount="indefinite" />
+    </circle>
+
+    <!-- PHASE MASK (AUTO CHANGE) -->
+    <circle cx="150" cy="150" r="50" fill="#0f0b02">
+        <animate
+            attributeName="cx"
+            values="120;150;180;150;120"
+            dur="10s"
+            repeatCount="indefinite" />
+    </circle>
+
+    <!-- INNER GLOW RING -->
+    <circle cx="150" cy="150" r="72"
+        fill="none"
+        stroke="url(#goldMoon)"
+        stroke-width="2"
+        opacity="0.6">
+        <animate
+            attributeName="opacity"
+            values="0.3;0.9;0.3"
+            dur="4s"
+            repeatCount="indefinite" />
+    </circle>
+
+    <!-- ORBIT SPARK -->
+    <circle cx="250" cy="150" r="3" fill="#fff">
+        <animateTransform
+            type="rotate"
+            from="0 150 150"
+            to="360 150 150"
+            dur="12s"
+            repeatCount="indefinite" />
+    </circle>
+
+    <!-- BRAND TEXT -->
+    <text x="150" y="235"
+        text-anchor="middle"
+        font-size="20"
+        fill="#d4af37"
+        font-family="serif"
+        letter-spacing="1.2">
+        Azis Zikr
+    </text>
+
+    <text x="150" y="255"
+        text-anchor="middle"
+        font-size="12"
+        fill="#c9ad55"
+        opacity="0.9"
+        font-family="serif">
+        Remembrance of Allah
+    </text>
+
+</svg>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Features – Azis Zikr</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#00ffb3">
+</head>
+
+<body>
+
+    <!-- SPLASH -->
+    <div id="splash">
+        <img src="assets/icons/icon-512.png" alt="Azis Zikr">
+    </div>
+
+    <!-- OVERLAY -->
+    <div class="hero-overlay"></div>
+
+    <!-- BACKGROUND VIDEO -->
+    <video id="bgVideo" autoplay muted loop playsinline>
+        <source src="assets/video/background.mp4" type="video/mp4">
+    </video>
+
+    <!-- HEADER -->
+    <header class="header" id="siteHeader">
+        <div class="header-inner">
+
+            <a href="index.html" class="logo">
+                <img src="assets/logo.svg" alt="Azis Zikr">
+                <span>Azis Zikr</span>
+            </a>
+
+            <nav class="nav" id="navMenu">
+                <a href="index.html">Zikr</a>
+                <a href="stats.html">Stats</a>
+                <a href="features.html" class="active">Features</a>
+                <a href="about.html">About</a>
+            </nav>
+
+            <div class="right">
+                <button id="themeToggle" style="width:auto; max-width:none; padding:8px 14px;">🌙</button>
+                <button id="hamburger" class="hamburger" aria-label="Toggle menu" aria-expanded="false">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <div class="hero-container">
+        <img src="assets/logo1.png" alt="Azis Zikr Logo" class="app-logo">
+        <h1>🤍 Bismillah Hir Rahman Nir Raheem 🤍</h1>
+
+        <!-- NASHEED AUDIO -->
+        <audio id="bgAudio" preload="auto">
+            <source src="assets/audio/nasheed.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="action-buttons">
+        <button id="soundToggle">
+            <span class="wave"></span><span class="wave"></span><span class="wave"></span>
+            Play Nasheed
+        </button>
+        <button id="notifyBtn">🔔 Enable Daily Reminder</button>
+    </div>
+
+    <!-- FEATURES CONTENT -->
+    <main class="page">
+        <h1>Features</h1>
+        <ul class="features-list">
+            <li>📿 17 Zikr &amp; Surah Counters with individual tracking</li>
+            <li>🌙 Dark / Light Mode with auto evening switch</li>
+            <li>🔊 Background Nasheed audio player</li>
+            <li>📲 PWA – Install as a native app</li>
+            <li>💾 Auto-save progress via localStorage</li>
+            <li>🔥 Daily streak tracking</li>
+            <li>🔔 Push notification reminders</li>
+            <li>📡 Offline support via Service Worker</li>
+            <li>🕌 No Ads • No Tracking • Pure Ibadah</li>
+        </ul>
+    </main>
+
+    <!-- NET STATUS -->
+    <div id="netStatus">🟢 Online</div>
+
+    <!-- FOOTER -->
+    <footer class="smart-footer">
+        <div class="footer-slider">
+            <div class="footer-track">
+                <span>🤍 Remember Allah, He remembers you</span>
+                <span>🤍 For luxury wedding invitations: azisinvites@gmail.com</span>
+                <span>📿 Azis Zikr • Simple • Peaceful • Pure</span>
+                <span>🌙 Daily Zikr brings inner peace</span>
+                <span>🕌 No Ads • No Tracking • Only Ibadah</span>
+                <span>✨ Made with love for the Ummah</span>
+                <span>🤍 Remember Allah, He remembers you</span>
+                <span>🤍 For luxury wedding invitations: azisinvites@gmail.com</span>
+                <span>📿 Azis Zikr • Simple • Peaceful • Pure</span>
+                <span>🌙 Daily Zikr brings inner peace</span>
+                <span>🕌 No Ads • No Tracking • Only Ibadah</span>
+                <span>✨ Made with love for the Ummah</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+
+</html>

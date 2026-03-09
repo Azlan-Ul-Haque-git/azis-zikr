@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Azis Zikr — Prayer Times</title>
+    <link rel="stylesheet" href="css/style.css">
+    <meta name="theme-color" content="#c9a84c">
+    <style>
+        .prayer-hero {
+            text-align: center;
+            padding: 50px 20px 30px
+        }
+
+        .prayer-hero h1 {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(22px, 5vw, 30px);
+            background: linear-gradient(135deg, var(--gold-lt), var(--teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px
+        }
+
+        .prayer-hero p {
+            color: var(--text-muted);
+            font-size: 13px
+        }
+
+        .time-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin-bottom: 14px
+        }
+
+        .time-card-head {
+            padding: 18px 20px 14px;
+            border-bottom: 1px solid var(--border2);
+            text-align: center
+        }
+
+        .time-card-head h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 15px;
+            color: var(--gold-lt);
+            letter-spacing: 2px
+        }
+
+        .time-card-head .date-str {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px
+        }
+
+        .time-card-head .loc-str {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px
+        }
+
+        .time-card-head .cd {
+            font-family: 'Cinzel', serif;
+            font-size: 16px;
+            color: var(--teal);
+            margin-top: 8px;
+            text-shadow: 0 0 12px var(--teal-glow)
+        }
+
+        .prayer-full .prayer-row {
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-bottom: 1px solid var(--border2);
+            transition: background .2s
+        }
+
+        .prayer-full .prayer-row:last-child {
+            border-bottom: none
+        }
+
+        .prayer-full .prayer-row:hover {
+            background: var(--surface2)
+        }
+
+        .prayer-full .prayer-row.nxt {
+            background: var(--gold-glass);
+            border-left: 3px solid var(--gold)
+        }
+
+        .p-icon {
+            font-size: 20px;
+            width: 28px;
+            text-align: center
+        }
+
+        .p-name {
+            font-size: 15px;
+            font-weight: 500;
+            flex: 1
+        }
+
+        .p-arabic {
+            font-family: 'Amiri', serif;
+            font-size: 13px;
+            color: var(--text-muted);
+            direction: rtl
+        }
+
+        .p-time {
+            font-family: 'Cinzel', serif;
+            font-size: 17px;
+            color: var(--teal);
+            font-weight: 600
+        }
+
+        .prayer-full .prayer-row.nxt .p-name,
+        .prayer-full .prayer-row.nxt .p-time {
+            color: var(--gold-lt)
+        }
+
+        /* QIBLA */
+        .qibla-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            text-align: center;
+            margin-bottom: 14px
+        }
+
+        .qibla-card h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 14px;
+            color: var(--gold);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 18px
+        }
+
+        .compass-wrap {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin: 0 auto 16px
+        }
+
+        .compass-ring {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            background: radial-gradient(circle, rgba(201, 168, 76, .06), transparent);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .compass-dirs {
+            position: absolute;
+            inset: 0
+        }
+
+        .compass-dirs span {
+            position: absolute;
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: 'Cinzel', serif;
+            font-weight: 600
+        }
+
+        .compass-dirs .cn {
+            top: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--gold)
+        }
+
+        .compass-dirs .cs {
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%)
+        }
+
+        .compass-dirs .ce {
+            right: 6px;
+            top: 50%;
+            transform: translateY(-50%)
+        }
+
+        .compass-dirs .cw {
+            left: 6px;
+            top: 50%;
+            transform: translateY(-50%)
+        }
+
+        .compass-needle {
+            width: 4px;
+            height: 60px;
+            background: linear-gradient(180deg, var(--gold), rgba(201, 168, 76, .3));
+            border-radius: 2px;
+            transform-origin: bottom center;
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            margin-left: -2px;
+            transition: transform 1s var(--ease)
+        }
+
+        .compass-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--gold);
+            box-shadow: 0 0 10px var(--gold-glow)
+        }
+
+        .qibla-deg {
+            font-family: 'Cinzel', serif;
+            font-size: 24px;
+            color: var(--gold-lt);
+            text-shadow: 0 0 16px var(--gold-glow)
+        }
+
+        .qibla-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px
+        }
+
+        /* HIJRI DATE */
+        .hijri-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 22px;
+            text-align: center;
+            margin-bottom: 14px
+        }
+
+        .hijri-date {
+            font-family: 'Amiri', serif;
+            font-size: clamp(22px, 5vw, 30px);
+            color: var(--gold-lt);
+            direction: rtl;
+            margin-bottom: 6px;
+            text-shadow: 0 0 20px var(--gold-glow)
+        }
+
+        .hijri-en {
+            font-family: 'Cinzel', serif;
+            font-size: 16px;
+            color: var(--text);
+            letter-spacing: 1px
+        }
+
+        .hijri-greg {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 6px
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="particles"></canvas>
+    <video id="bgVideo" autoplay muted loop playsinline>
+        <source src="assets/video/background.mp4" type="video/mp4">
+    </video>
+    <div class="page-overlay"></div>
+
+    <header class="header" id="siteHeader">
+        <div class="header-inner">
+            <a href="index.html" class="logo">
+                <img src="assets/logo.svg" alt="">
+                <div class="logo-text"><span class="brand">Azis Zikr</span><span class="tagline">Digital Tasbih</span>
+                </div>
+            </a>
+            <nav class="nav" id="navMenu">
+                <a href="index.html">🏠 Zikr</a>
+                <a href="quran.html">📖 Quran</a>
+                <a href="prayer.html">🕌 Prayer</a>
+                <a href="stats.html">📊 Stats</a>
+                <a href="duas.html">🤲 Duas</a>
+                <a href="about.html">💫 About</a>
+            </nav>
+            <div class="hdr-right">
+                <button class="icon-btn" id="themeBtn">🌙</button>
+                <button class="hamburger" id="ham"><span></span><span></span><span></span></button>
+            </div>
+        </div>
+    </header>
+
+    <div class="prayer-hero">
+        <h1>🕌 Prayer Times</h1>
+        <p>Stay connected to your five daily prayers</p>
+    </div>
+
+    <div class="page-wrap">
+
+        <!-- HIJRI DATE -->
+        <div class="hijri-card" id="hijriCard">
+            <div class="hijri-date" id="hijriAr">جاري التحميل…</div>
+            <div class="hijri-en" id="hijriEn">Loading…</div>
+            <div class="hijri-greg" id="hijriGreg"></div>
+        </div>
+
+        <!-- PRAYER TIMES -->
+        <div class="time-card">
+            <div class="time-card-head">
+                <h2>Today's Salah Times</h2>
+                <div class="date-str" id="dateStr"></div>
+                <div class="loc-str" id="prayerLoc">📍 Jabalpur, Madhya Pradesh, India</div>
+                <div class="cd" id="prayerCD"></div>
+            </div>
+            <div class="prayer-full" id="prayerList">
+                <div class="prayer-row"><span class="p-icon">⏳</span><span class="p-name">Loading prayer times…</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- QIBLA -->
+        <div class="qibla-card">
+            <h3>🧭 Qibla Direction</h3>
+            <div class="compass-wrap">
+                <div class="compass-ring">
+                    <div class="compass-dirs">
+                        <span class="cn">N</span><span class="cs">S</span>
+                        <span class="ce">E</span><span class="cw">W</span>
+                    </div>
+                    <div class="compass-needle" id="qiblaNeedle"></div>
+                    <div class="compass-dot"></div>
+                </div>
+            </div>
+            <div class="qibla-deg" id="qiblaDeg">—°</div>
+            <div class="qibla-sub" id="qiblaSub">Allow location to show Qibla direction</div>
+        </div>
+
+    </div>
+
+    <div id="netStatus"></div>
+    <footer class="footer">
+        <div class="footer-ticker">
+            <div class="footer-track">
+                <span>🕌 <em>الصلاة خير من النوم</em> — Prayer is better than sleep</span>
+                <span>📿 Azis Zikr — Your daily ibadah companion</span>
+                <span>🕌 <em>الصلاة خير من النوم</em> — Prayer is better than sleep</span>
+                <span>📿 Azis Zikr — Your daily ibadah companion</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script>
+        const PRAYERS_INFO = [
+            { n: 'Fajr', i: '🌅', ar: 'الفجر' },
+            { n: 'Sunrise', i: '☀️', ar: 'الشروق' },
+            { n: 'Dhuhr', i: '🌞', ar: 'الظهر' },
+            { n: 'Asr', i: '🌤', ar: 'العصر' },
+            { n: 'Maghrib', i: '🌆', ar: 'المغرب' },
+            { n: 'Isha', i: '🌙', ar: 'العشاء' },
+        ];
+
+        /* ── JABALPUR FIXED ── */
+        const JBP_LAT = 23.1815, JBP_LNG = 79.9864;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const now = new Date();
+            q('#dateStr').textContent = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            q('#prayerLoc').textContent = '📍 Jabalpur, Madhya Pradesh, India';
+
+            fetchHijri(now);
+            loadJaipurPrayers(now);
+            computeQibla(JBP_LAT, JBP_LNG);
+        });
+
+        async function loadJaipurPrayers(now) {
+            try {
+                const d = now;
+                const url = `https://api.aladhan.com/v1/timings/${p2(d.getDate())}-${p2(d.getMonth() + 1)}-${d.getFullYear()}?latitude=${JBP_LAT}&longitude=${JBP_LNG}&method=1`;
+                const r = await fetch(url); const j = await r.json();
+                const t = j.data.timings;
+                const times = PRAYERS_INFO.map(p => ({ ...p, tm: t[p.n] })).filter(p => p.tm);
+                const nowM = now.getHours() * 60 + now.getMinutes();
+                let nxt = -1;
+                times.forEach((p, i) => { const [h, m] = p.tm.split(':').map(Number); if (h * 60 + m > nowM && nxt === -1) nxt = i });
+                q('#prayerList').innerHTML = times.map((p, i) => `
+      <div class="prayer-row ${i === nxt ? 'nxt' : ''}">
+        <span class="p-icon">${p.i}</span>
+        <span class="p-name">${p.n} ${i === nxt ? '<span class="nxt-badge">NEXT</span>' : ''}</span>
+        <span class="p-arabic">${p.ar}</span>
+        <span class="p-time">${p.tm}</span>
+      </div>`).join('');
+                if (nxt >= 0) { const [h, m] = times[nxt].tm.split(':').map(Number); const diff = (h * 60 + m) - nowM; q('#prayerCD').textContent = `⏱ ${times[nxt].n} in ${Math.floor(diff / 60)}h ${diff % 60}m` }
+            } catch { q('#prayerLoc').textContent = '📍 Jabalpur — Could not load times' }
+        }
+
+        async function fetchHijri(d) {
+            try {
+                const url = `https://api.aladhan.com/v1/gToH/${p2(d.getDate())}-${p2(d.getMonth() + 1)}-${d.getFullYear()}`;
+                const r = await fetch(url); const j = await r.json();
+                const h = j.data.hijri;
+                q('#hijriAr').textContent = `${h.day} ${h.month.ar} ${h.year}`;
+                q('#hijriEn').textContent = `${h.day} ${h.month.en} ${h.year} AH`;
+                q('#hijriGreg').textContent = `Gregorian: ${d.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}`;
+            } catch { q('#hijriAr').textContent = ''; q('#hijriEn').textContent = 'Hijri date unavailable' }
+        }
+
+        function computeQibla(lat, lng) {
+            const KA_LAT = 21.4225, KA_LNG = 39.8262;
+            const φ1 = lat * Math.PI / 180, φ2 = KA_LAT * Math.PI / 180;
+            const Δλ = (KA_LNG - lng) * Math.PI / 180;
+            const y = Math.sin(Δλ) * Math.cos(φ2);
+            const x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
+            const brng = ((Math.atan2(y, x) * 180 / Math.PI) + 360) % 360;
+            q('#qiblaNeedle').style.transform = `rotate(${brng}deg)`;
+            q('#qiblaDeg').textContent = `${Math.round(brng)}°`;
+            q('#qiblaSub').textContent = `Jabalpur se Qibla: ${Math.round(brng)}° (North se) — Kaaba ki taraf`;
+        }
+    </script>
+</body>
+
+</html>

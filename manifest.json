@@ -1,0 +1,29 @@
+{
+    "name": "Azis Zikr",
+    "short_name": "Zikr",
+    "description": "A simple, peaceful digital zikr counter for the Ummah.",
+    "start_url": "/index.html",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#000000",
+    "theme_color": "#00ffb3",
+    "categories": [
+        "lifestyle",
+        "utilities"
+    ],
+    "icons": [
+        {
+            "src": "assets/icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "assets/icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}

@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Azis Zikr — Quran Explorer</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#c9a84c">
+    <style>
+        .quran-hero {
+            text-align: center;
+            padding: 50px 20px 26px
+        }
+
+        .quran-hero h1 {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(22px, 5vw, 30px);
+            background: linear-gradient(135deg, var(--gold-lt), var(--teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px
+        }
+
+        .quran-hero p {
+            color: var(--text-muted);
+            font-size: 13px
+        }
+
+        .lang-tabs {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 0 auto 18px;
+            max-width: var(--max-w);
+            padding: 0 16px
+        }
+
+        .lang-tab {
+            padding: 8px 18px;
+            border-radius: 100px;
+            border: 1px solid var(--border2);
+            background: var(--surface);
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .22s;
+            font-family: 'Poppins', sans-serif
+        }
+
+        .lang-tab:hover {
+            border-color: var(--border);
+            color: var(--text)
+        }
+
+        .lang-tab.on {
+            background: linear-gradient(135deg, rgba(201, 168, 76, .25), rgba(201, 168, 76, .1));
+            border-color: var(--gold);
+            color: var(--gold-lt);
+            box-shadow: 0 0 14px var(--gold-glow)
+        }
+
+        .surah-search {
+            position: relative;
+            max-width: var(--max-w);
+            margin: 0 auto 14px;
+            padding: 0 16px
+        }
+
+        .surah-search input {
+            width: 100%;
+            padding: 13px 18px 13px 46px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: border-color .2s;
+            backdrop-filter: blur(10px)
+        }
+
+        .surah-search input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px var(--gold-glass)
+        }
+
+        .surah-search input::placeholder {
+            color: var(--text-muted)
+        }
+
+        .surah-search .s-icon {
+            position: absolute;
+            left: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            pointer-events: none
+        }
+
+        .results-count {
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            max-width: var(--max-w);
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0 16px
+        }
+
+        .surah-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 20px
+        }
+
+        @media(max-width:420px) {
+            .surah-grid {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .surah-item {
+            background: var(--surface);
+            border: 1px solid var(--border2);
+            border-radius: var(--radius);
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all .22s
+        }
+
+        .surah-item:hover {
+            border-color: var(--gold);
+            background: var(--gold-glass);
+            box-shadow: 0 0 14px rgba(201, 168, 76, .1)
+        }
+
+        .surah-num {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--gold-glass);
+            color: var(--gold);
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-family: 'Cinzel', serif
+        }
+
+        .surah-info {
+            flex: 1;
+            min-width: 0
+        }
+
+        .surah-name-en {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis
+        }
+
+        .surah-name-ur {
+            font-family: 'Noto Nastaliq Urdu', serif;
+            font-size: 13px;
+            color: var(--gold-lt);
+            direction: rtl;
+            line-height: 1.8;
+            margin-top: 1px
+        }
+
+        .surah-meta {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 1px
+        }
+
+        .surah-name-ar {
+            font-family: 'Amiri', serif;
+            font-size: 16px;
+            color: var(--gold-lt);
+            direction: rtl;
+            flex-shrink: 0
+        }
+
+        /* ── VERSE VIEWER ── */
+        .verse-viewer {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin-bottom: 16px;
+            display: none
+        }
+
+        .verse-viewer.show {
+            display: block;
+            animation: fadeUp .3s ease
+        }
+
+        .verse-head {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap
+        }
+
+        .verse-surah-name {
+            font-family: 'Cinzel', serif;
+            font-size: 12px;
+            color: var(--gold);
+            flex: 1;
+            min-width: 100px
+        }
+
+        .verse-nav {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            flex-wrap: wrap
+        }
+
+        .verse-num-badge {
+            font-family: 'Cinzel', serif;
+            font-size: 11px;
+            color: var(--text-muted);
+            padding: 0 4px;
+            white-space: nowrap
+        }
+
+        .verse-body {
+            padding: 18px 16px
+        }
+
+        .lang-badge {
+            display: inline-block;
+            font-size: 9px;
+            padding: 2px 8px;
+            border-radius: 100px;
+            margin-bottom: 5px;
+            letter-spacing: .5px;
+            text-transform: uppercase;
+            font-weight: 600
+        }
+
+        .lang-badge.ar {
+            background: rgba(201, 168, 76, .15);
+            color: var(--gold);
+            border: 1px solid rgba(201, 168, 76, .3)
+        }
+
+        .lang-badge.ur {
+            background: rgba(100, 200, 130, .12);
+            color: #8dd8a0;
+            border: 1px solid rgba(100, 200, 130, .25)
+        }
+
+        .lang-badge.hl {
+            background: rgba(100, 180, 230, .12);
+            color: #7ec8e3;
+            border: 1px solid rgba(100, 180, 230, .25)
+        }
+
+        .lang-badge.en {
+            background: rgba(255, 255, 255, .06);
+            color: var(--text-muted);
+            border: 1px solid var(--border2)
+        }
+
+        .v-arabic {
+            font-family: 'Amiri', serif;
+            font-size: clamp(22px, 5vw, 30px);
+            color: var(--gold-lt);
+            direction: rtl;
+            text-align: right;
+            line-height: 2.2;
+            margin-bottom: 16px;
+            text-shadow: 0 0 15px var(--gold-glow);
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border2)
+        }
+
+        .v-urdu {
+            font-family: 'Noto Nastaliq Urdu', serif;
+            font-size: clamp(16px, 4vw, 20px);
+            color: #8dd8a0;
+            direction: rtl;
+            text-align: right;
+            line-height: 2.5;
+            margin-bottom: 14px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border2);
+            display: none
+        }
+
+        .v-urdu.show {
+            display: block
+        }
+
+        .v-hinglish {
+            font-size: 14px;
+            color: #7ec8e3;
+            line-height: 1.9;
+            margin-bottom: 14px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border2);
+            font-style: italic;
+            display: none
+        }
+
+        .v-hinglish.show {
+            display: block
+        }
+
+        .v-en {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.8;
+            font-style: italic;
+            display: none
+        }
+
+        .v-en.show {
+            display: block
+        }
+
+        .verse-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border2)
+        }
+
+        .verse-loading {
+            text-align: center;
+            padding: 32px;
+            color: var(--text-muted);
+            font-size: 13px
+        }
+
+        .spinner {
+            width: 26px;
+            height: 26px;
+            border: 2px solid var(--border);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+            margin: 0 auto 10px
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="particles"></canvas>
+    <video id="bgVideo" autoplay muted loop playsinline>
+        <source src="assets/video/background.mp4" type="video/mp4">
+    </video>
+    <div class="page-overlay"></div>
+
+    <header class="header" id="siteHeader">
+        <div class="header-inner">
+            <a href="index.html" class="logo">
+                <img src="assets/logo.svg" alt="">
+                <div class="logo-text"><span class="brand">Azis Zikr</span><span class="tagline">Digital Tasbih</span>
+                </div>
+            </a>
+            <nav class="nav" id="navMenu">
+                <a href="index.html">🏠 Zikr</a>
+                <a href="quran.html">📖 Quran</a>
+                <a href="prayer.html">🕌 Prayer</a>
+                <a href="stats.html">📊 Stats</a>
+                <a href="duas.html">🤲 Duas</a>
+                <a href="about.html">💫 About</a>
+            </nav>
+            <div class="hdr-right">
+                <button class="icon-btn" id="themeBtn">🌙</button>
+                <button class="hamburger" id="ham"><span></span><span></span><span></span></button>
+            </div>
+        </div>
+    </header>
+
+    <div class="quran-hero">
+        <h1>📖 Quran Explorer</h1>
+        <p>Arabic · اردو ترجمہ · Hinglish Tarjuma · English — Tamam 114 Surahs</p>
+    </div>
+
+    <!-- LANGUAGE TABS -->
+    <div class="lang-tabs">
+        <button class="lang-tab on" data-lang="ar">🕌 Arabic</button>
+        <button class="lang-tab" data-lang="ur">🇵🇰 Urdu ترجمہ</button>
+        <button class="lang-tab" data-lang="hl">🔤 Hinglish</button>
+        <button class="lang-tab" data-lang="en">🌐 English</button>
+        <button class="lang-tab" data-lang="all">📚 Sab Dikhao</button>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="surah-search">
+        <span class="s-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search surah bya name or number…">
+    </div>
+
+    <div class="page-wrap" style="padding-top:0">
+        <div class="results-count" id="resultsCount">Tamam 114 Surahs dikh rahi hain</div>
+
+        <!-- VERSE VIEWER -->
+        <div class="verse-viewer" id="verseViewer">
+            <div class="verse-head">
+                <div class="verse-surah-name" id="vSurahName">Surah</div>
+                <div class="verse-nav">
+                    <button class="btn btn-ghost btn-sm" id="vFirst" title="Pehli Ayat">⏮</button>
+                    <button class="btn btn-ghost btn-sm" id="vPrev">←</button>
+                    <span class="verse-num-badge" id="vNum">1 / 1</span>
+                    <button class="btn btn-ghost btn-sm" id="vNext">→</button>
+                    <button class="btn btn-ghost btn-sm" id="vLast" title="Aakhri Ayat">⏭</button>
+                    <button class="btn btn-ghost btn-sm" id="vClose">✕</button>
+                </div>
+            </div>
+            <div class="verse-body" id="verseBody">
+                <div class="verse-loading">
+                    <div class="spinner"></div>Loading…
+                </div>
+            </div>
+        </div>
+
+        <div class="surah-grid" id="surahGrid"></div>
+    </div>
+
+    <div id="netStatus"></div>
+    <footer class="footer">
+        <div class="footer-ticker">
+            <div class="footer-track">
+                <span>📖 <em>وَرَتِّلِ الْقُرْآنَ تَرْتِيلًا</em> — Quran ko thahar thahar kar paro</span>
+                <span>📿 Azis Zikr — Aapka Quran, Zikr aur Dua companion</span>
+                <span>🌙 Har roz ek Surah paro — dil ko sukoon milega</span>
+                <span>📖 <em>وَرَتِّلِ الْقُرْآنَ تَرْتِيلًا</em> — Quran ko thahar thahar kar paro</span>
+                <span>📿 Azis Zikr — Yours Quran, Zikr & Dua companion</span>
+                <span>🌙 Read a Surah Daily </span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script>
+        const SURAHS = [
+            { n: 1, en: 'Al-Fatiha', ar: 'الفاتحة', urName: 'سورۃ الفاتحہ', verses: 7, type: 'Meccan' },
+            { n: 2, en: 'Al-Baqarah', ar: 'البقرة', urName: 'سورۃ البقرہ', verses: 286, type: 'Medinan' },
+            { n: 3, en: 'Al-Imran', ar: 'آل عمران', urName: 'سورۃ آل عمران', verses: 200, type: 'Medinan' },
+            { n: 4, en: 'An-Nisa', ar: 'النساء', urName: 'سورۃ النساء', verses: 176, type: 'Medinan' },
+            { n: 5, en: "Al-Ma'idah", ar: 'المائدة', urName: 'سورۃ المائدہ', verses: 120, type: 'Medinan' },
+            { n: 6, en: "Al-An'am", ar: 'الأنعام', urName: 'سورۃ الانعام', verses: 165, type: 'Meccan' },
+            { n: 7, en: "Al-A'raf", ar: 'الأعراف', urName: 'سورۃ الاعراف', verses: 206, type: 'Meccan' },
+            { n: 8, en: 'Al-Anfal', ar: 'الأنفال', urName: 'سورۃ الانفال', verses: 75, type: 'Medinan' },
+            { n: 9, en: 'At-Tawbah', ar: 'التوبة', urName: 'سورۃ التوبہ', verses: 129, type: 'Medinan' },
+            { n: 10, en: 'Yunus', ar: 'يونس', urName: 'سورۃ یونس', verses: 109, type: 'Meccan' },
+            { n: 11, en: 'Hud', ar: 'هود', urName: 'سورۃ ہود', verses: 123, type: 'Meccan' },
+            { n: 12, en: 'Yusuf', ar: 'يوسف', urName: 'سورۃ یوسف', verses: 111, type: 'Meccan' },
+            { n: 13, en: "Ar-Ra'd", ar: 'الرعد', urName: 'سورۃ الرعد', verses: 43, type: 'Medinan' },
+            { n: 14, en: 'Ibrahim', ar: 'إبراهيم', urName: 'سورۃ ابراہیم', verses: 52, type: 'Meccan' },
+            { n: 15, en: 'Al-Hijr', ar: 'الحجر', urName: 'سورۃ الحجر', verses: 99, type: 'Meccan' },
+            { n: 16, en: 'An-Nahl', ar: 'النحل', urName: 'سورۃ النحل', verses: 128, type: 'Meccan' },
+            { n: 17, en: 'Al-Isra', ar: 'الإسراء', urName: 'سورۃ الاسراء', verses: 111, type: 'Meccan' },
+            { n: 18, en: 'Al-Kahf', ar: 'الكهف', urName: 'سورۃ الکہف', verses: 110, type: 'Meccan' },
+            { n: 19, en: 'Maryam', ar: 'مريم', urName: 'سورۃ مریم', verses: 98, type: 'Meccan' },
+            { n: 20, en: 'Ta-Ha', ar: 'طه', urName: 'سورۃ طہٰ', verses: 135, type: 'Meccan' },
+            { n: 21, en: 'Al-Anbiya', ar: 'الأنبياء', urName: 'سورۃ الانبیاء', verses: 112, type: 'Meccan' },
+            { n: 22, en: 'Al-Hajj', ar: 'الحج', urName: 'سورۃ الحج', verses: 78, type: 'Medinan' },
+            { n: 23, en: "Al-Mu'minun", ar: 'المؤمنون', urName: 'سورۃ المومنون', verses: 118, type: 'Meccan' },
+            { n: 24, en: 'An-Nur', ar: 'النور', urName: 'سورۃ النور', verses: 64, type: 'Medinan' },
+            { n: 25, en: 'Al-Furqan', ar: 'الفرقان', urName: 'سورۃ الفرقان', verses: 77, type: 'Meccan' },
+            { n: 26, en: "Ash-Shu'ara", ar: 'الشعراء', urName: 'سورۃ الشعراء', verses: 227, type: 'Meccan' },
+            { n: 27, en: 'An-Naml', ar: 'النمل', urName: 'سورۃ النمل', verses: 93, type: 'Meccan' },
+            { n: 28, en: 'Al-Qasas', ar: 'القصص', urName: 'سورۃ القصص', verses: 88, type: 'Meccan' },
+            { n: 29, en: "Al-'Ankabut", ar: 'العنكبوت', urName: 'سورۃ العنکبوت', verses: 69, type: 'Meccan' },
+            { n: 30, en: 'Ar-Rum', ar: 'الروم', urName: 'سورۃ الروم', verses: 60, type: 'Meccan' },
+            { n: 31, en: 'Luqman', ar: 'لقمان', urName: 'سورۃ لقمان', verses: 34, type: 'Meccan' },
+            { n: 32, en: 'As-Sajdah', ar: 'السجدة', urName: 'سورۃ السجدہ', verses: 30, type: 'Meccan' },
+            { n: 33, en: 'Al-Ahzab', ar: 'الأحزاب', urName: 'سورۃ الاحزاب', verses: 73, type: 'Medinan' },
+            { n: 34, en: "Saba'", ar: 'سبأ', urName: 'سورۃ سبا', verses: 54, type: 'Meccan' },
+            { n: 35, en: 'Fatir', ar: 'فاطر', urName: 'سورۃ فاطر', verses: 45, type: 'Meccan' },
+            { n: 36, en: 'Ya-Sin', ar: 'يس', urName: 'سورۃ یٰسین', verses: 83, type: 'Meccan' },
+            { n: 37, en: 'As-Saffat', ar: 'الصافات', urName: 'سورۃ الصافات', verses: 182, type: 'Meccan' },
+            { n: 38, en: 'Sad', ar: 'ص', urName: 'سورۃ صٓ', verses: 88, type: 'Meccan' },
+            { n: 39, en: 'Az-Zumar', ar: 'الزمر', urName: 'سورۃ الزمر', verses: 75, type: 'Meccan' },
+            { n: 40, en: 'Ghafir', ar: 'غافر', urName: 'سورۃ غافر', verses: 85, type: 'Meccan' },
+            { n: 41, en: 'Fussilat', ar: 'فصلت', urName: 'سورۃ فصلت', verses: 54, type: 'Meccan' },
+            { n: 42, en: 'Ash-Shura', ar: 'الشورى', urName: 'سورۃ الشوری', verses: 53, type: 'Meccan' },
+            { n: 43, en: 'Az-Zukhruf', ar: 'الزخرف', urName: 'سورۃ الزخرف', verses: 89, type: 'Meccan' },
+            { n: 44, en: 'Ad-Dukhan', ar: 'الدخان', urName: 'سورۃ الدخان', verses: 59, type: 'Meccan' },
+            { n: 45, en: 'Al-Jathiyah', ar: 'الجاثية', urName: 'سورۃ الجاثیہ', verses: 37, type: 'Meccan' },
+            { n: 46, en: 'Al-Ahqaf', ar: 'الأحقاف', urName: 'سورۃ الاحقاف', verses: 35, type: 'Meccan' },
+            { n: 47, en: 'Muhammad', ar: 'محمد', urName: 'سورۃ محمد', verses: 38, type: 'Medinan' },
+            { n: 48, en: 'Al-Fath', ar: 'الفتح', urName: 'سورۃ الفتح', verses: 29, type: 'Medinan' },
+            { n: 49, en: 'Al-Hujurat', ar: 'الحجرات', urName: 'سورۃ الحجرات', verses: 18, type: 'Medinan' },
+            { n: 50, en: 'Qaf', ar: 'ق', urName: 'سورۃ قٓ', verses: 45, type: 'Meccan' },
+            { n: 51, en: 'Adh-Dhariyat', ar: 'الذاريات', urName: 'سورۃ الذاریات', verses: 60, type: 'Meccan' },
+            { n: 52, en: 'At-Tur', ar: 'الطور', urName: 'سورۃ الطور', verses: 49, type: 'Meccan' },
+            { n: 53, en: 'An-Najm', ar: 'النجم', urName: 'سورۃ النجم', verses: 62, type: 'Meccan' },
+            { n: 54, en: 'Al-Qamar', ar: 'القمر', urName: 'سورۃ القمر', verses: 55, type: 'Meccan' },
+            { n: 55, en: 'Ar-Rahman', ar: 'الرحمن', urName: 'سورۃ الرحمٰن', verses: 78, type: 'Medinan' },
+            { n: 56, en: "Al-Waqi'ah", ar: 'الواقعة', urName: 'سورۃ الواقعہ', verses: 96, type: 'Meccan' },
+            { n: 57, en: 'Al-Hadid', ar: 'الحديد', urName: 'سورۃ الحدید', verses: 29, type: 'Medinan' },
+            { n: 58, en: 'Al-Mujadila', ar: 'المجادلة', urName: 'سورۃ المجادلہ', verses: 22, type: 'Medinan' },
+            { n: 59, en: 'Al-Hashr', ar: 'الحشر', urName: 'سورۃ الحشر', verses: 24, type: 'Medinan' },
+            { n: 60, en: 'Al-Mumtahanah', ar: 'الممتحنة', urName: 'سورۃ الممتحنہ', verses: 13, type: 'Medinan' },
+            { n: 61, en: 'As-Saf', ar: 'الصف', urName: 'سورۃ الصف', verses: 14, type: 'Medinan' },
+            { n: 62, en: "Al-Jumu'ah", ar: 'الجمعة', urName: 'سورۃ الجمعہ', verses: 11, type: 'Medinan' },
+            { n: 63, en: 'Al-Munafiqun', ar: 'المنافقون', urName: 'سورۃ المنافقون', verses: 11, type: 'Medinan' },
+            { n: 64, en: 'At-Taghabun', ar: 'التغابن', urName: 'سورۃ التغابن', verses: 18, type: 'Medinan' },
+            { n: 65, en: 'At-Talaq', ar: 'الطلاق', urName: 'سورۃ الطلاق', verses: 12, type: 'Medinan' },
+            { n: 66, en: 'At-Tahrim', ar: 'التحريم', urName: 'سورۃ التحریم', verses: 12, type: 'Medinan' },
+            { n: 67, en: 'Al-Mulk', ar: 'الملك', urName: 'سورۃ الملک', verses: 30, type: 'Meccan' },
+            { n: 68, en: 'Al-Qalam', ar: 'القلم', urName: 'سورۃ القلم', verses: 52, type: 'Meccan' },
+            { n: 69, en: 'Al-Haqqah', ar: 'الحاقة', urName: 'سورۃ الحاقہ', verses: 52, type: 'Meccan' },
+            { n: 70, en: "Al-Ma'arij", ar: 'المعارج', urName: 'سورۃ المعارج', verses: 44, type: 'Meccan' },
+            { n: 71, en: 'Nuh', ar: 'نوح', urName: 'سورۃ نوح', verses: 28, type: 'Meccan' },
+            { n: 72, en: 'Al-Jinn', ar: 'الجن', urName: 'سورۃ الجن', verses: 28, type: 'Meccan' },
+            { n: 73, en: 'Al-Muzzammil', ar: 'المزمل', urName: 'سورۃ المزمل', verses: 20, type: 'Meccan' },
+            { n: 74, en: 'Al-Muddaththir', ar: 'المدثر', urName: 'سورۃ المدثر', verses: 56, type: 'Meccan' },
+            { n: 75, en: 'Al-Qiyamah', ar: 'القيامة', urName: 'سورۃ القیامہ', verses: 40, type: 'Meccan' },
+            { n: 76, en: 'Al-Insan', ar: 'الإنسان', urName: 'سورۃ الانسان', verses: 31, type: 'Medinan' },
+            { n: 77, en: 'Al-Mursalat', ar: 'المرسلات', urName: 'سورۃ المرسلات', verses: 50, type: 'Meccan' },
+            { n: 78, en: "An-Naba'", ar: 'النبأ', urName: 'سورۃ النبا', verses: 40, type: 'Meccan' },
+            { n: 79, en: "An-Nazi'at", ar: 'النازعات', urName: 'سورۃ النازعات', verses: 46, type: 'Meccan' },
+            { n: 80, en: 'Abasa', ar: 'عبس', urName: 'سورۃ عبس', verses: 42, type: 'Meccan' },
+            { n: 81, en: 'At-Takwir', ar: 'التكوير', urName: 'سورۃ التکویر', verses: 29, type: 'Meccan' },
+            { n: 82, en: 'Al-Infitar', ar: 'الانفطار', urName: 'سورۃ الانفطار', verses: 19, type: 'Meccan' },
+            { n: 83, en: 'Al-Mutaffifin', ar: 'المطففين', urName: 'سورۃ المطففین', verses: 36, type: 'Meccan' },
+            { n: 84, en: 'Al-Inshiqaq', ar: 'الانشقاق', urName: 'سورۃ الانشقاق', verses: 25, type: 'Meccan' },
+            { n: 85, en: 'Al-Buruj', ar: 'البروج', urName: 'سورۃ البروج', verses: 22, type: 'Meccan' },
+            { n: 86, en: 'At-Tariq', ar: 'الطارق', urName: 'سورۃ الطارق', verses: 17, type: 'Meccan' },
+            { n: 87, en: "Al-A'la", ar: 'الأعلى', urName: 'سورۃ الاعلیٰ', verses: 19, type: 'Meccan' },
+            { n: 88, en: 'Al-Ghashiyah', ar: 'الغاشية', urName: 'سورۃ الغاشیہ', verses: 26, type: 'Meccan' },
+            { n: 89, en: 'Al-Fajr', ar: 'الفجر', urName: 'سورۃ الفجر', verses: 30, type: 'Meccan' },
+            { n: 90, en: 'Al-Balad', ar: 'البلد', urName: 'سورۃ البلد', verses: 20, type: 'Meccan' },
+            { n: 91, en: 'Ash-Shams', ar: 'الشمس', urName: 'سورۃ الشمس', verses: 15, type: 'Meccan' },
+            { n: 92, en: 'Al-Layl', ar: 'الليل', urName: 'سورۃ اللیل', verses: 21, type: 'Meccan' },
+            { n: 93, en: 'Ad-Duha', ar: 'الضحى', urName: 'سورۃ الضحیٰ', verses: 11, type: 'Meccan' },
+            { n: 94, en: 'Ash-Sharh', ar: 'الشرح', urName: 'سورۃ الانشراح', verses: 8, type: 'Meccan' },
+            { n: 95, en: 'At-Tin', ar: 'التين', urName: 'سورۃ التین', verses: 8, type: 'Meccan' },
+            { n: 96, en: "Al-'Alaq", ar: 'العلق', urName: 'سورۃ العلق', verses: 19, type: 'Meccan' },
+            { n: 97, en: 'Al-Qadr', ar: 'القدر', urName: 'سورۃ القدر', verses: 5, type: 'Meccan' },
+            { n: 98, en: 'Al-Bayyinah', ar: 'البينة', urName: 'سورۃ البینہ', verses: 8, type: 'Medinan' },
+            { n: 99, en: 'Az-Zalzalah', ar: 'الزلزلة', urName: 'سورۃ الزلزلہ', verses: 8, type: 'Medinan' },
+            { n: 100, en: "Al-'Adiyat", ar: 'العاديات', urName: 'سورۃ العادیات', verses: 11, type: 'Meccan' },
+            { n: 101, en: "Al-Qari'ah", ar: 'القارعة', urName: 'سورۃ القارعہ', verses: 11, type: 'Meccan' },
+            { n: 102, en: 'At-Takathur', ar: 'التكاثر', urName: 'سورۃ التکاثر', verses: 8, type: 'Meccan' },
+            { n: 103, en: 'Al-Asr', ar: 'العصر', urName: 'سورۃ العصر', verses: 3, type: 'Meccan' },
+            { n: 104, en: 'Al-Humazah', ar: 'الهمزة', urName: 'سورۃ الہمزہ', verses: 9, type: 'Meccan' },
+            { n: 105, en: 'Al-Fil', ar: 'الفيل', urName: 'سورۃ الفیل', verses: 5, type: 'Meccan' },
+            { n: 106, en: 'Quraysh', ar: 'قريش', urName: 'سورۃ قریش', verses: 4, type: 'Meccan' },
+            { n: 107, en: "Al-Ma'un", ar: 'الماعون', urName: 'سورۃ الماعون', verses: 7, type: 'Meccan' },
+            { n: 108, en: 'Al-Kawthar', ar: 'الكوثر', urName: 'سورۃ الکوثر', verses: 3, type: 'Meccan' },
+            { n: 109, en: 'Al-Kafirun', ar: 'الكافرون', urName: 'سورۃ الکافرون', verses: 6, type: 'Meccan' },
+            { n: 110, en: 'An-Nasr', ar: 'النصر', urName: 'سورۃ النصر', verses: 3, type: 'Medinan' },
+            { n: 111, en: 'Al-Masad', ar: 'المسد', urName: 'سورۃ المسد', verses: 5, type: 'Meccan' },
+            { n: 112, en: 'Al-Ikhlas', ar: 'الإخلاص', urName: 'سورۃ الاخلاص', verses: 4, type: 'Meccan' },
+            { n: 113, en: 'Al-Falaq', ar: 'الفلق', urName: 'سورۃ الفلق', verses: 5, type: 'Meccan' },
+            { n: 114, en: 'An-Nas', ar: 'الناس', urName: 'سورۃ الناس', verses: 6, type: 'Meccan' },
+        ];
+
+        let curLang = 'ar', curSurah = null, curVerse = 1, totalVerses = 1, verseCache = {};
+
+        function renderSurahs(list) {
+            const g = q('#surahGrid'); g.innerHTML = '';
+            q('#resultsCount').textContent = `${list.length} Surahs are being displayed`;
+            list.forEach(s => {
+                const el = document.createElement('div'); el.className = 'surah-item';
+                el.innerHTML = `<div class="surah-num">${s.n}</div><div class="surah-info"><div class="surah-name-en">${s.en}</div><div class="surah-name-ur">${s.urName}</div><div class="surah-meta">${s.verses} ayaat • ${s.type}</div></div><div class="surah-name-ar">${s.ar}</div>`;
+                el.addEventListener('click', () => openSurah(s));
+                g.appendChild(el);
+            });
+        }
+
+        async function openSurah(s) {
+            curSurah = s; curVerse = 1; totalVerses = s.verses;
+            const viewer = q('#verseViewer'); viewer.classList.add('show');
+            q('#vSurahName').textContent = `${s.n}. ${s.en} — ${s.urName}`;
+            viewer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            await loadVerse(s.n, 1);
+        }
+
+        async function loadVerse(surah, verse) {
+            q('#vNum').textContent = `Ayat ${verse} / ${totalVerses}`;
+            q('#verseBody').innerHTML = '<div class="verse-loading"><div class="spinner"></div>Ayat load ho rahi hai…</div>';
+            const key = `${surah}_${verse}`;
+            if (verseCache[key]) { renderVerse(verseCache[key]); return }
+            try {
+                const [rAr, rUr, rEn] = await Promise.all([
+                    fetch(`https://api.alquran.cloud/v1/ayah/${surah}:${verse}/quran-uthmani`),
+                    fetch(`https://api.alquran.cloud/v1/ayah/${surah}:${verse}/ur.jalandhry`),
+                    fetch(`https://api.alquran.cloud/v1/ayah/${surah}:${verse}/en.sahih`),
+                ]);
+                const [jAr, jUr, jEn] = await Promise.all([rAr.json(), rUr.json(), rEn.json()]);
+                const data = { ar: jAr.data.text, ur: jUr.data.text, en: jEn.data.text, num: verse };
+                verseCache[key] = data; renderVerse(data);
+            } catch {
+                q('#verseBody').innerHTML = '<div class="verse-loading">⚠️ Please check your internet connection and try again.</div>';
+            }
+        }
+
+        function renderVerse(d) {
+            q('#verseBody').innerHTML = `
+    <span class="lang-badge ar">Arabic — عربی</span>
+    <div class="v-arabic">${d.ar}</div>
+
+    <span class="lang-badge ur">Urdu Tarjuma — اردو ترجمہ</span>
+    <div class="v-urdu ${['ur', 'all'].includes(curLang) ? 'show' : ''}">${d.ur}</div>
+
+    <span class="lang-badge hl">Hinglish Matlab</span>
+    <div class="v-hinglish ${['hl', 'all'].includes(curLang) ? 'show' : ''}">
+      <strong style="color:var(--gold-lt);font-style:normal">Matlab:</strong> ${d.en}
+      <br><span style="color:var(--text-dim);font-size:11px;font-style:normal">— Ayat ${d.num}</span>
+    </div>
+
+    <span class="lang-badge en">English Translation</span>
+    <div class="v-en ${['en', 'all'].includes(curLang) ? 'show' : ''}">${d.en}</div>
+
+    <div class="verse-actions">
+      <button class="btn btn-ghost btn-sm" onclick="copyVerse()">📋 Copy</button>
+      <button class="btn btn-ghost btn-sm" onclick="shareVerse()">🔗 Share</button>
+    </div>`;
+        }
+
+        function applyLang() {
+            const body = q('#verseBody'); if (!body) return;
+            const urEl = q('.v-urdu', body), hlEl = q('.v-hinglish', body), enEl = q('.v-en', body);
+            if (!urEl) return;
+            if (curLang === 'all') { urEl.classList.add('show'); hlEl.classList.add('show'); enEl.classList.add('show') }
+            else { urEl.classList.toggle('show', curLang === 'ur'); hlEl.classList.toggle('show', curLang === 'hl'); enEl.classList.toggle('show', curLang === 'en') }
+        }
+
+        window.copyVerse = function () {
+            const key = curSurah ? `${curSurah.n}_${curVerse}` : null; if (!key || !verseCache[key]) return;
+            const d = verseCache[key];
+            const txt = `${d.ar}\n\nاردو: ${d.ur}\n\nEnglish: ${d.en}\n— Surah ${curSurah.en}, Ayat ${d.num} | Azis Zikr`;
+            navigator.clipboard && navigator.clipboard.writeText(txt).then(() => toast('📋 Ayat Copied!')).catch(() => toast('Copy Failed'));
+        };
+        window.shareVerse = function () {
+            const key = curSurah ? `${curSurah.n}_${curVerse}` : null; if (!key || !verseCache[key]) return;
+            const d = verseCache[key];
+            const txt = `${d.ar}\n\n${d.en}\n— Surah ${curSurah.en}, Ayat ${d.num} | Azis Zikr App`;
+            if (navigator.share) navigator.share({ title: 'Azis Zikr', text: txt }).catch(() => { });
+            else navigator.clipboard && navigator.clipboard.writeText(txt).then(() => toast('📋 Copied!'));
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSurahs(SURAHS);
+
+            qa('.lang-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    qa('.lang-tab').forEach(t => t.classList.remove('on')); tab.classList.add('on');
+                    curLang = tab.dataset.lang; applyLang();
+                    const names = { ar: 'Arabic', ur: 'Urdu Tarjuma', hl: 'Hinglish', en: 'English', all: 'All Languages' };
+                    toast(`🌐 ${names[curLang] || curLang} selected`);
+                });
+            });
+
+            q('#searchInput').addEventListener('input', function () {
+                const v = this.value.toLowerCase().trim();
+                if (!v) { renderSurahs(SURAHS); return }
+                renderSurahs(SURAHS.filter(s =>
+                    s.en.toLowerCase().includes(v) || s.ar.includes(v) ||
+                    s.urName.includes(v) || String(s.n) === v
+                ));
+            });
+
+            q('#vNext').addEventListener('click', () => { if (curVerse < totalVerses) { curVerse++; loadVerse(curSurah.n, curVerse) } });
+            q('#vPrev').addEventListener('click', () => { if (curVerse > 1) { curVerse--; loadVerse(curSurah.n, curVerse) } });
+            q('#vFirst').addEventListener('click', () => { curVerse = 1; loadVerse(curSurah.n, 1) });
+            q('#vLast').addEventListener('click', () => { curVerse = totalVerses; loadVerse(curSurah.n, totalVerses) });
+            q('#vClose').addEventListener('click', () => { q('#verseViewer').classList.remove('show'); curSurah = null });
+        });
+    </script>
+</body>
+
+</html>
