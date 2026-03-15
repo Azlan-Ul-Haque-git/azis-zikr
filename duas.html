@@ -1,850 +1,542 @@
 <!DOCTYPE html>
 <html lang="en">
+<head><script>if("serviceWorker"in navigator){navigator.serviceWorker.getRegistrations().then(r=>r.forEach(x=>x.unregister()));if(window.caches)caches.keys().then(k=>k.forEach(x=>caches.delete(x)));}</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
+<title>Azis Zikr — Duas Collection</title>
+<link rel="stylesheet" href="css/style.css?v=5">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#c9a84c">
+<style>
+.duas-hero{text-align:center;padding:50px 20px 26px}
+.duas-hero h1{font-family:'Cinzel',serif;font-size:clamp(22px,5vw,30px);background:linear-gradient(135deg,var(--gold-lt),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+.duas-hero p{color:var(--text-muted);font-size:13px}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Azis Zikr — Duas Collection</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
-    <meta name="theme-color" content="#c9a84c">
-    <style>
-        .duas-hero {
-            text-align: center;
-            padding: 50px 20px 26px
-        }
+/* SEARCH BAR */
+.dua-search{position:relative;max-width:var(--max-w);margin:0 auto 16px;padding:0 16px}
+.dua-search input{width:100%;padding:12px 18px 12px 44px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:'Poppins',sans-serif;font-size:14px;outline:none;transition:border-color .2s;backdrop-filter:blur(10px)}
+.dua-search input:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-glass)}
+.dua-search input::placeholder{color:var(--text-muted)}
+.dua-search .s-icon{position:absolute;left:30px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none}
 
-        .duas-hero h1 {
-            font-family: 'Cinzel', serif;
-            font-size: clamp(22px, 5vw, 30px);
-            background: linear-gradient(135deg, var(--gold-lt), var(--teal));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 6px
-        }
+/* CAT TABS */
+.cat-tabs{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;padding:0 16px 18px;max-width:var(--max-w);margin:auto}
+.cat-tab{padding:7px 15px;border-radius:100px;border:1px solid var(--border2);background:var(--surface);color:var(--text-muted);font-size:12px;cursor:pointer;transition:all .2s;font-family:'Poppins',sans-serif;white-space:nowrap}
+.cat-tab.on,.cat-tab:hover{background:var(--gold-glass);border-color:var(--gold);color:var(--gold-lt);box-shadow:0 0 10px var(--gold-glow)}
 
-        .duas-hero p {
-            color: var(--text-muted);
-            font-size: 13px
-        }
+/* COUNT */
+.dua-count{text-align:center;font-size:11px;color:var(--text-muted);margin-bottom:12px}
 
-        /* SEARCH BAR */
-        .dua-search {
-            position: relative;
-            max-width: var(--max-w);
-            margin: 0 auto 16px;
-            padding: 0 16px
-        }
+/* DUA CARD */
+.dua-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:0;margin-bottom:10px;transition:border-color .25s,box-shadow .25s;overflow:hidden}
+.dua-card:hover{border-color:rgba(201,168,76,.4)}
+.dua-card.open{border-color:var(--gold);box-shadow:0 0 18px rgba(201,168,76,.1)}
+.dua-top{display:flex;align-items:center;gap:12px;padding:16px 18px;cursor:pointer;user-select:none}
+.dua-icon{font-size:22px;flex-shrink:0}
+.dua-texts{flex:1;min-width:0}
+.dua-title{font-size:14px;font-weight:600;color:var(--text)}
+.dua-title-ur{font-family:'Noto Nastaliq Urdu',serif;font-size:13px;color:var(--gold-lt);direction:rtl;line-height:1.8;margin-top:2px}
+.dua-chevron{color:var(--gold);font-size:16px;transition:transform .3s;flex-shrink:0}
+.dua-card.open .dua-chevron{transform:rotate(45deg)}
 
-        .dua-search input {
-            width: 100%;
-            padding: 12px 18px 12px 44px;
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            background: var(--surface);
-            color: var(--text);
-            font-family: 'Poppins', sans-serif;
-            font-size: 14px;
-            outline: none;
-            transition: border-color .2s;
-            backdrop-filter: blur(10px)
-        }
+.dua-body{max-height:0;overflow:hidden;transition:max-height .45s cubic-bezier(.4,0,.2,1)}
+.dua-card.open .dua-body{max-height:800px}
+.dua-inner{padding:0 18px 18px;display:flex;flex-direction:column;gap:10px}
 
-        .dua-search input:focus {
-            border-color: var(--gold);
-            box-shadow: 0 0 0 3px var(--gold-glass)
-        }
+/* ARABIC */
+.dua-arabic{font-family:'Amiri',serif;font-size:clamp(18px,4.5vw,26px);color:var(--gold-lt);direction:rtl;text-align:right;line-height:2.2;text-shadow:0 0 15px var(--gold-glow);padding:10px 0 10px;border-bottom:1px solid var(--border2)}
+.dua-lbl{display:inline-flex;align-items:center;font-size:9px;padding:3px 10px;border-radius:100px;margin:8px 0 4px;letter-spacing:.8px;text-transform:uppercase;font-weight:700;font-family:'Poppins',sans-serif}
+.ur-lbl{background:rgba(100,200,130,.12);color:#5ecb85;border:1px solid rgba(100,200,130,.25)}
+.hl-lbl{background:rgba(201,168,76,.1);color:var(--gold-lt);border:1px solid rgba(201,168,76,.2)}
+.tr-lbl{background:rgba(100,150,230,.1);color:#7ec8e3;border:1px solid rgba(100,150,230,.2)}
 
-        .dua-search input::placeholder {
-            color: var(--text-muted)
-        }
+/* URDU */
+.dua-urdu{font-family:'Noto Nastaliq Urdu',serif;font-size:clamp(15px,3.8vw,19px);color:#8dd8a0;direction:rtl;text-align:right;line-height:2.4;padding-bottom:10px;border-bottom:1px solid var(--border2)}
+.dua-urdu-label{font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;text-align:left}
 
-        .dua-search .s-icon {
-            position: absolute;
-            left: 30px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 15px;
-            pointer-events: none
-        }
+/* HINGLISH */
+.dua-hinglish{font-size:13px;color:#7ec8e3;line-height:1.8;padding-bottom:10px;border-bottom:1px solid var(--border2)}
+.dua-hinglish-label{font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px}
 
-        /* CAT TABS */
-        .cat-tabs {
-            display: flex;
-            gap: 7px;
-            flex-wrap: wrap;
-            justify-content: center;
-            padding: 0 16px 18px;
-            max-width: var(--max-w);
-            margin: auto
-        }
+/* TRANSLITERATION */
+.dua-tr{font-size:12px;color:var(--teal);font-style:italic;line-height:1.7;padding-bottom:8px;border-bottom:1px solid var(--border2)}
 
-        .cat-tab {
-            padding: 7px 15px;
-            border-radius: 100px;
-            border: 1px solid var(--border2);
-            background: var(--surface);
-            color: var(--text-muted);
-            font-size: 12px;
-            cursor: pointer;
-            transition: all .2s;
-            font-family: 'Poppins', sans-serif;
-            white-space: nowrap
-        }
+/* ENGLISH */
+.dua-en{font-size:13px;color:var(--text-muted);line-height:1.7;font-style:italic;padding-bottom:8px}
 
-        .cat-tab.on,
-        .cat-tab:hover {
-            background: var(--gold-glass);
-            border-color: var(--gold);
-            color: var(--gold-lt);
-            box-shadow: 0 0 10px var(--gold-glow)
-        }
+/* SOURCE */
+.dua-source{font-size:10px;color:var(--text-dim);font-family:'Cinzel',serif;letter-spacing:.5px;padding-bottom:4px}
 
-        /* COUNT */
-        .dua-count {
-            text-align: center;
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-bottom: 12px
-        }
-
-        /* DUA CARD */
-        .dua-card {
-            background: var(--surface);
-            border: 1px solid var(--border2);
-            border-radius: var(--radius-lg);
-            padding: 0;
-            margin-bottom: 10px;
-            transition: border-color .25s, box-shadow .25s;
-            overflow: hidden
-        }
-
-        .dua-card:hover {
-            border-color: rgba(201, 168, 76, .4)
-        }
-
-        .dua-card.open {
-            border-color: var(--gold);
-            box-shadow: 0 0 18px rgba(201, 168, 76, .1)
-        }
-
-        .dua-top {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px 18px;
-            cursor: pointer;
-            user-select: none
-        }
-
-        .dua-icon {
-            font-size: 22px;
-            flex-shrink: 0
-        }
-
-        .dua-texts {
-            flex: 1;
-            min-width: 0
-        }
-
-        .dua-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text)
-        }
-
-        .dua-title-ur {
-            font-family: 'Noto Nastaliq Urdu', serif;
-            font-size: 13px;
-            color: var(--gold-lt);
-            direction: rtl;
-            line-height: 1.8;
-            margin-top: 2px
-        }
-
-        .dua-chevron {
-            color: var(--gold);
-            font-size: 16px;
-            transition: transform .3s;
-            flex-shrink: 0
-        }
-
-        .dua-card.open .dua-chevron {
-            transform: rotate(45deg)
-        }
-
-        .dua-body {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height .45s cubic-bezier(.4, 0, .2, 1)
-        }
-
-        .dua-card.open .dua-body {
-            max-height: 800px
-        }
-
-        .dua-inner {
-            padding: 0 18px 18px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px
-        }
-
-        /* ARABIC */
-        .dua-arabic {
-            font-family: 'Amiri', serif;
-            font-size: clamp(18px, 4.5vw, 26px);
-            color: var(--gold-lt);
-            direction: rtl;
-            text-align: right;
-            line-height: 2.2;
-            text-shadow: 0 0 15px var(--gold-glow);
-            padding: 10px 0 10px;
-            border-bottom: 1px solid var(--border2)
-        }
-
-        /* URDU */
-        .dua-urdu {
-            font-family: 'Noto Nastaliq Urdu', serif;
-            font-size: clamp(15px, 3.8vw, 19px);
-            color: #8dd8a0;
-            direction: rtl;
-            text-align: right;
-            line-height: 2.4;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border2)
-        }
-
-        .dua-urdu-label {
-            font-size: 9px;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 3px;
-            text-align: left
-        }
-
-        /* HINGLISH */
-        .dua-hinglish {
-            font-size: 13px;
-            color: #7ec8e3;
-            line-height: 1.8;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border2)
-        }
-
-        .dua-hinglish-label {
-            font-size: 9px;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 3px
-        }
-
-        /* TRANSLITERATION */
-        .dua-tr {
-            font-size: 12px;
-            color: var(--teal);
-            font-style: italic;
-            line-height: 1.7;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--border2)
-        }
-
-        /* ENGLISH */
-        .dua-en {
-            font-size: 13px;
-            color: var(--text-muted);
-            line-height: 1.7;
-            font-style: italic;
-            padding-bottom: 8px
-        }
-
-        /* SOURCE */
-        .dua-source {
-            font-size: 10px;
-            color: var(--text-dim);
-            font-family: 'Cinzel', serif;
-            letter-spacing: .5px;
-            padding-bottom: 4px
-        }
-
-        /* ACTIONS */
-        .dua-actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            padding-top: 6px
-        }
-
-        .fav-btn.active {
-            color: var(--gold) !important;
-            border-color: var(--gold) !important
-        }
-    </style>
+/* ACTIONS */
+.dua-actions{display:flex;gap:8px;flex-wrap:wrap;padding-top:6px}
+.fav-btn.active{color:var(--gold)!important;border-color:var(--gold)!important}
+</style>
 </head>
-
 <body>
-    <canvas id="particles"></canvas>
-    <video id="bgVideo" autoplay muted loop playsinline>
-        <source src="assets/video/background.mp4" type="video/mp4">
-    </video>
-    <div class="page-overlay"></div>
+<canvas id="particles"></canvas>
+<video id="bgVideo" autoplay muted loop playsinline><source src="assets/video/background.mp4" type="video/mp4"></video>
+<div class="page-overlay"></div>
 
-    <header class="header" id="siteHeader">
-        <div class="header-inner">
-            <a href="index.html" class="logo">
-                <img src="assets/logo.svg" alt="">
-                <div class="logo-text"><span class="brand">Azis Zikr</span><span class="tagline">Digital Tasbih</span>
-                </div>
-            </a>
-            <nav class="nav" id="navMenu">
-                <a href="index.html">🏠 Zikr</a>
-                <a href="quran.html">📖 Quran</a>
-                <a href="prayer.html">🕌 Prayer</a>
-                <a href="stats.html">📊 Stats</a>
-                <a href="duas.html">🤲 Duas</a>
-                <a href="about.html">💫 About</a>
-            </nav>
-            <div class="hdr-right">
-                <button class="icon-btn" id="themeBtn">🌙</button>
-                <button class="hamburger" id="ham"><span></span><span></span><span></span></button>
-            </div>
-        </div>
-    </header>
-
-    <div class="duas-hero">
-        <h1>🤲 Duas Collection</h1>
-        <p>Arabic · اردو ترجمہ · Hinglish · English — 60+ Masnoon Duain</p>
+<header class="header" id="siteHeader">
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <img src="assets/logo.svg" alt="">
+      <div class="logo-text"><span class="brand">Azis Zikr</span><span class="tagline">Digital Tasbih</span></div>
+    </a>
+        <nav class="nav" id="navMenu">
+      <a href="index.html">🏠 Zikr</a>
+      <a href="quran.html">📖 Quran</a>
+      <a href="prayer.html">🕌 Prayer</a>
+      <a href="asmaul.html">✨ 99 Names</a>
+      <a href="ramadan.html">🌙 Ramadan</a>
+      <a href="calendar.html">📅 Calendar</a>
+      <a href="reminders.html">🔔 Reminders</a>
+      <a href="stats.html">📊 Stats</a>
+      <a href="duas.html">🤲 Duas</a>
+      <a href="about.html">💫 About</a>
+    </nav>
+    <div class="hdr-right">
+      <button class="icon-btn" id="themeBtn">🌙</button>
+      <button class="hamburger" id="ham"><span></span><span></span><span></span></button>
     </div>
+  </div>
+</header>
 
-    <!-- SEARCH -->
-    <div class="dua-search"><span class="s-icon">🔍</span><input type="text" id="duaSearch"
-            placeholder="Search duas. Find by keyword…"></div>
+<div class="duas-hero">
+  <h1>🤲 Duas Collection</h1>
+  <p>Arabic · اردو ترجمہ · Hinglish · English — 60+ Masnoon Duain</p>
+</div>
 
-    <!-- CAT TABS -->
-    <div class="cat-tabs" id="catTabs"></div>
+<!-- SEARCH -->
+<div class="dua-search"><span class="s-icon">🔍</span><input type="text" id="duaSearch" placeholder="Dua dhundho — naam ya lafz likho…"></div>
 
-    <div class="page-wrap" style="padding-top:0">
-        <div class="dua-count" id="duaCount"></div>
-        <div id="duaList"></div>
-    </div>
+<!-- CAT TABS -->
+<div class="cat-tabs" id="catTabs"></div>
 
-    <div id="netStatus"></div>
-    <footer class="footer">
-        <div class="footer-ticker">
-            <div class="footer-track">
-                <span>🤲 <em>ادعوني استجب لكم</em> — Mujhe pukaro, main qabool karunga</span>
-                <span>📿 Azis Zikr — Koi Ad nahi, Koi Tracking nahi, Sirf Ibadah</span>
-                <span>🌙 Dua woh silah hai jo hamesha kaam aata hai</span>
-                <span>🤲 <em>ادعوني استجب لكم</em> — Mujhe pukaro, main qabool karunga</span>
-                <span>📿 Azis Zikr — Koi Ad nahi, Koi Tracking nahi, Sirf Ibadah</span>
-                <span>🌙 Dua woh silah hai jo hamesha kaam aata hai</span>
-            </div>
-        </div>
-    </footer>
+<div class="page-wrap" style="padding-top:0">
+  <div class="dua-count" id="duaCount"></div>
+  <div id="duaList"></div>
+</div>
 
-    <script src="js/app.js"></script>
-    <script>
-        /* ═══════════════════════════════════════════
-           60+ DUAS — Arabic + Urdu + Hinglish + English
-           Each dua has: cat, icon, title, titleUr, ar, ur, hl, tr, en, src
-        ═══════════════════════════════════════════ */
-        const DUAS = [
-            /* ─── MORNING ─── */
-            {
-                cat: 'Morning 🌅', icon: '🌅', title: 'Morning Remembrance', titleUr: 'صبح کی دعا',
-                ar: 'أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ',
-                ur: 'ہم نے صبح کی اور تمام بادشاہی اللہ کی ہے، اور تمام تعریفیں اللہ کے لیے ہیں',
-                hl: 'Subah ho gayi, aur tamam badshahi Allah ki hai. Aur shukar Allah ka hai.',
-                tr: 'Asbahna wa asbahal mulku lillahi wal hamdu lillah',
-                en: 'We have entered the morning and the entire kingdom belongs to Allah, and all praise is for Allah.', src: 'Abu Dawud'
-            },
+<div id="netStatus"></div>
+<footer class="footer">
+  <div class="footer-ticker"><div class="footer-track">
+    <span>🤲 <em>ادعوني استجب لكم</em> — Mujhe pukaro, main qabool karunga</span>
+    <span>📿 Azis Zikr — Koi Ad nahi, Koi Tracking nahi, Sirf Ibadah</span>
+    <span>🌙 Dua woh silah hai jo hamesha kaam aata hai</span>
+    <span>🤲 <em>ادعوني استجب لكم</em> — Mujhe pukaro, main qabool karunga</span>
+    <span>📿 Azis Zikr — Koi Ad nahi, Koi Tracking nahi, Sirf Ibadah</span>
+    <span>🌙 Dua woh silah hai jo hamesha kaam aata hai</span>
+  </div></div>
+</footer>
 
-            {
-                cat: 'Morning 🌅', icon: '🌅', title: 'Morning Protection Dua', titleUr: 'صبح کی حفاظت',
-                ar: 'بِسْمِ اللهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ',
-                ur: 'اللہ کے نام سے، جس کے نام کے ساتھ زمین اور آسمان میں کوئی چیز نقصان نہیں پہنچا سکتی',
-                hl: 'Allah ke naam se, jis ke naam ke saath zameen aur aasman mein koi cheez nuqsan nahi pohoncha sakti.',
-                tr: "Bismillahil-ladhi la yadurru ma'asmihi shay'un fil ardi wala fis-sama'",
-                en: "In the name of Allah, with Whose name nothing on earth or in heaven can cause harm.", src: 'Abu Dawud, Tirmidhi'
-            },
+<script src="js/app.js?v=5"></script>
+<script>
+/* ═══════════════════════════════════════════
+   60+ DUAS — Arabic + Urdu + Hinglish + English
+   Each dua has: cat, icon, title, titleUr, ar, ur, hl, tr, en, src
+═══════════════════════════════════════════ */
+const DUAS=[
+  /* ─── MORNING ─── */
+  {cat:'Morning 🌅',icon:'🌅',title:'Morning Remembrance',titleUr:'صبح کی دعا',
+   ar:'أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ',
+   ur:'ہم نے صبح کی اور تمام بادشاہی اللہ کی ہے، اور تمام تعریفیں اللہ کے لیے ہیں',
+   hl:'Subah ho gayi, aur tamam badshahi Allah ki hai. Aur shukar Allah ka hai.',
+   tr:'Asbahna wa asbahal mulku lillahi wal hamdu lillah',
+   en:'We have entered the morning and the entire kingdom belongs to Allah, and all praise is for Allah.',src:'Abu Dawud'},
 
-            {
-                cat: 'Morning 🌅', icon: '🌅', title: 'Morning Tasbih (100x)', titleUr: 'صبح کی تسبیح',
-                ar: 'سُبْحَانَ اللهِ وَبِحَمْدِهِ',
-                ur: 'اللہ پاک ہے اور اس کی تعریف ہے',
-                hl: 'Allah pak hai aur uski tarif hai. Subah 100 baar paro, gunaah maaf ho jaate hain.',
-                tr: 'SubhanAllahi wa bihamdihi',
-                en: 'Glory be to Allah and praise be to Him. Recite 100 times in the morning — sins are forgiven.', src: 'Bukhari & Muslim'
-            },
+  {cat:'Morning 🌅',icon:'🌅',title:'Morning Protection Dua',titleUr:'صبح کی حفاظت',
+   ar:'بِسْمِ اللهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ',
+   ur:'اللہ کے نام سے، جس کے نام کے ساتھ زمین اور آسمان میں کوئی چیز نقصان نہیں پہنچا سکتی',
+   hl:'Allah ke naam se, jis ke naam ke saath zameen aur aasman mein koi cheez nuqsan nahi pohoncha sakti.',
+   tr:"Bismillahil-ladhi la yadurru ma'asmihi shay'un fil ardi wala fis-sama'",
+   en:"In the name of Allah, with Whose name nothing on earth or in heaven can cause harm.",src:'Abu Dawud, Tirmidhi'},
 
-            {
-                cat: 'Morning 🌅', icon: '☀️', title: 'Dua upon Waking Up', titleUr: 'جاگنے کی دعا',
-                ar: 'الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ',
-                ur: 'تمام تعریفیں اللہ کے لیے جس نے ہمیں مارنے کے بعد زندہ کیا اور اسی کی طرف اٹھنا ہے',
-                hl: 'Shukar hai Allah ka jis ne humein marne ke baad zinda kiya. Aur usi ki taraf uthna hai.',
-                tr: 'Alhamdulillahil-ladhi ahyana ba\'da ma amatana wa ilayhin-nushur',
-                en: 'All praise is for Allah who gave us life after causing us to die, and to Him is the resurrection.', src: 'Bukhari'
-            },
+  {cat:'Morning 🌅',icon:'🌅',title:'Morning Tasbih (100x)',titleUr:'صبح کی تسبیح',
+   ar:'سُبْحَانَ اللهِ وَبِحَمْدِهِ',
+   ur:'اللہ پاک ہے اور اس کی تعریف ہے',
+   hl:'Allah pak hai aur uski tarif hai. Subah 100 baar paro, gunaah maaf ho jaate hain.',
+   tr:'SubhanAllahi wa bihamdihi',
+   en:'Glory be to Allah and praise be to Him. Recite 100 times in the morning — sins are forgiven.',src:'Bukhari & Muslim'},
 
-            {
-                cat: 'Morning 🌅', icon: '🌄', title: 'Dua for Good Day', titleUr: 'اچھے دن کی دعا',
-                ar: 'اللَّهُمَّ بِكَ أَصْبَحْنَا وَبِكَ أَمْسَيْنَا وَبِكَ نَحْيَا وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ',
-                ur: 'اے اللہ! تیری مدد سے ہم نے صبح کی، تیری مدد سے شام کی، تیری مدد سے جیتے ہیں، تیری مدد سے مریں گے',
-                hl: 'Aye Allah! Teri madad se subah ki, teri madad se shaam hogi. Tujh hi se jeena aur marna hai.',
-                tr: 'Allahumma bika asbahna wa bika amsayna wa bika nahya wa bika namutu wa ilaikan-nushur',
-                en: 'O Allah, by Your leave we have reached the morning, by Your leave we reach the evening, by You we live and die, and to You is the resurrection.', src: 'Abu Dawud, Tirmidhi'
-            },
+  {cat:'Morning 🌅',icon:'☀️',title:'Dua upon Waking Up',titleUr:'جاگنے کی دعا',
+   ar:'الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ',
+   ur:'تمام تعریفیں اللہ کے لیے جس نے ہمیں مارنے کے بعد زندہ کیا اور اسی کی طرف اٹھنا ہے',
+   hl:'Shukar hai Allah ka jis ne humein marne ke baad zinda kiya. Aur usi ki taraf uthna hai.',
+   tr:'Alhamdulillahil-ladhi ahyana ba\'da ma amatana wa ilayhin-nushur',
+   en:'All praise is for Allah who gave us life after causing us to die, and to Him is the resurrection.',src:'Bukhari'},
 
-            /* ─── EVENING ─── */
-            {
-                cat: 'Evening 🌙', icon: '🌙', title: 'Evening Remembrance', titleUr: 'شام کی دعا',
-                ar: 'أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ وَالْحَمْدُ لِلَّهِ',
-                ur: 'ہم نے شام کی اور تمام بادشاہی اللہ کی ہے، اور تمام تعریفیں اللہ کے لیے ہیں',
-                hl: 'Shaam ho gayi, aur tamam badshahi Allah ki hai. Alhamdulillah.',
-                tr: 'Amsayna wa amsal mulku lillahi wal hamdu lillah',
-                en: 'We have entered the evening and the entire kingdom belongs to Allah, and all praise is for Allah.', src: 'Muslim'
-            },
+  {cat:'Morning 🌅',icon:'🌄',title:'Dua for Good Day',titleUr:'اچھے دن کی دعا',
+   ar:'اللَّهُمَّ بِكَ أَصْبَحْنَا وَبِكَ أَمْسَيْنَا وَبِكَ نَحْيَا وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ',
+   ur:'اے اللہ! تیری مدد سے ہم نے صبح کی، تیری مدد سے شام کی، تیری مدد سے جیتے ہیں، تیری مدد سے مریں گے',
+   hl:'Aye Allah! Teri madad se subah ki, teri madad se shaam hogi. Tujh hi se jeena aur marna hai.',
+   tr:'Allahumma bika asbahna wa bika amsayna wa bika nahya wa bika namutu wa ilaikan-nushur',
+   en:'O Allah, by Your leave we have reached the morning, by Your leave we reach the evening, by You we live and die, and to You is the resurrection.',src:'Abu Dawud, Tirmidhi'},
 
-            {
-                cat: 'Evening 🌙', icon: '🌙', title: 'Evening Protection', titleUr: 'شام کی حفاظت',
-                ar: 'أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ',
-                ur: 'اللہ کے مکمل کلمات کی پناہ میں آتا ہوں اس چیز کے شر سے جو اس نے پیدا کی',
-                hl: 'Allah ke pore kalmaat ki panah leta hoon har us cheez ke shar se jo Allah ne banai hai.',
-                tr: "A'udhu bikalimatillahit-tammati min sharri ma khalaq",
-                en: 'I seek refuge in the perfect words of Allah from the evil of what He has created.', src: 'Muslim'
-            },
+  /* ─── EVENING ─── */
+  {cat:'Evening 🌙',icon:'🌙',title:'Evening Remembrance',titleUr:'شام کی دعا',
+   ar:'أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ وَالْحَمْدُ لِلَّهِ',
+   ur:'ہم نے شام کی اور تمام بادشاہی اللہ کی ہے، اور تمام تعریفیں اللہ کے لیے ہیں',
+   hl:'Shaam ho gayi, aur tamam badshahi Allah ki hai. Alhamdulillah.',
+   tr:'Amsayna wa amsal mulku lillahi wal hamdu lillah',
+   en:'We have entered the evening and the entire kingdom belongs to Allah, and all praise is for Allah.',src:'Muslim'},
 
-            {
-                cat: 'Evening 🌙', icon: '🌃', title: 'Evening Tasbih', titleUr: 'شام کی تسبیح',
-                ar: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ عَدَدَ خَلْقِهِ وَرِضَا نَفْسِهِ',
-                ur: 'اللہ پاک ہے اور اس کی تعریف ہے اس کی مخلوق کی تعداد کے برابر',
-                hl: 'Allah pak hai, uski tarif hai — uski makhlooq ki tadaad ke barabar, uski raza ke barabar.',
-                tr: "SubhanAllahi wa bihamdihi adada khalqihi wa rida nafsihi",
-                en: 'Glory and praise be to Allah, as much as the number of His creation and His pleasure.', src: 'Muslim'
-            },
+  {cat:'Evening 🌙',icon:'🌙',title:'Evening Protection',titleUr:'شام کی حفاظت',
+   ar:'أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ',
+   ur:'اللہ کے مکمل کلمات کی پناہ میں آتا ہوں اس چیز کے شر سے جو اس نے پیدا کی',
+   hl:'Allah ke pore kalmaat ki panah leta hoon har us cheez ke shar se jo Allah ne banai hai.',
+   tr:"A'udhu bikalimatillahit-tammati min sharri ma khalaq",
+   en:'I seek refuge in the perfect words of Allah from the evil of what He has created.',src:'Muslim'},
 
-            /* ─── PRAYER ─── */
-            {
-                cat: 'Prayer 🕌', icon: '🕌', title: 'Before Salah (Iftitah)', titleUr: 'نماز سے پہلے',
-                ar: 'سُبْحَانَكَ اللَّهُمَّ وَبِحَمْدِكَ وَتَبَارَكَ اسْمُكَ وَتَعَالَى جَدُّكَ',
-                ur: 'اے اللہ! تو پاک ہے اور تیری تعریف ہے، تیرا نام بابرکت ہے اور تیری شان بلند ہے',
-                hl: 'Aye Allah tu pak hai, teri tarif hai, tera naam mubarak hai aur teri shaan buland hai.',
-                tr: 'Subhanakal-lahumma wa bihamdika wa tabarakasmuka wa ta\'ala jadduka',
-                en: 'Glory be to You O Allah, and praise. Blessed is Your name and exalted is Your majesty.', src: 'Abu Dawud'
-            },
+  {cat:'Evening 🌙',icon:'🌃',title:'Evening Tasbih',titleUr:'شام کی تسبیح',
+   ar:'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ عَدَدَ خَلْقِهِ وَرِضَا نَفْسِهِ',
+   ur:'اللہ پاک ہے اور اس کی تعریف ہے اس کی مخلوق کی تعداد کے برابر',
+   hl:'Allah pak hai, uski tarif hai — uski makhlooq ki tadaad ke barabar, uski raza ke barabar.',
+   tr:"SubhanAllahi wa bihamdihi adada khalqihi wa rida nafsihi",
+   en:'Glory and praise be to Allah, as much as the number of His creation and His pleasure.',src:'Muslim'},
 
-            {
-                cat: 'Prayer 🕌', icon: '🕌', title: 'After Every Prayer', titleUr: 'نماز کے بعد',
-                ar: 'أَسْتَغْفِرُ اللَّهَ (×3) — اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ',
-                ur: 'اللہ سے معافی مانگتا ہوں (تین بار) — اے اللہ تو سلامتی ہے اور تجھ سے سلامتی ہے',
-                hl: 'Astaghfirullah teen baar — Aye Allah tu hi salaamti hai aur tujhi se salaamti milti hai.',
-                tr: "Astaghfirullah (x3) — Allahumma antas-salamu wa minkas-salam",
-                en: 'I seek forgiveness from Allah (x3). O Allah, You are Peace and from You is peace.', src: 'Muslim'
-            },
+  /* ─── PRAYER ─── */
+  {cat:'Prayer 🕌',icon:'🕌',title:'Before Salah (Iftitah)',titleUr:'نماز سے پہلے',
+   ar:'سُبْحَانَكَ اللَّهُمَّ وَبِحَمْدِكَ وَتَبَارَكَ اسْمُكَ وَتَعَالَى جَدُّكَ',
+   ur:'اے اللہ! تو پاک ہے اور تیری تعریف ہے، تیرا نام بابرکت ہے اور تیری شان بلند ہے',
+   hl:'Aye Allah tu pak hai, teri tarif hai, tera naam mubarak hai aur teri shaan buland hai.',
+   tr:'Subhanakal-lahumma wa bihamdika wa tabarakasmuka wa ta\'ala jadduka',
+   en:'Glory be to You O Allah, and praise. Blessed is Your name and exalted is Your majesty.',src:'Abu Dawud'},
 
-            {
-                cat: 'Prayer 🕌', icon: '📿', title: 'After Fajr & Maghrib (100x)', titleUr: 'فجر و مغرب کے بعد',
-                ar: 'لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ',
-                ur: 'اللہ کے سوا کوئی معبود نہیں، وہ اکیلا ہے، اس کا کوئی شریک نہیں',
-                hl: 'Allah ke alawa koi ibadaat ke laayq nahi, woh akela hai, koi saajhi nahi.',
-                tr: 'La ilaha illallahu wahdahu la sharika lah',
-                en: 'There is no god but Allah alone, with no partner or associate.', src: 'Bukhari & Muslim'
-            },
+  {cat:'Prayer 🕌',icon:'🕌',title:'After Every Prayer',titleUr:'نماز کے بعد',
+   ar:'أَسْتَغْفِرُ اللَّهَ (×3) — اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ',
+   ur:'اللہ سے معافی مانگتا ہوں (تین بار) — اے اللہ تو سلامتی ہے اور تجھ سے سلامتی ہے',
+   hl:'Astaghfirullah teen baar — Aye Allah tu hi salaamti hai aur tujhi se salaamti milti hai.',
+   tr:"Astaghfirullah (x3) — Allahumma antas-salamu wa minkas-salam",
+   en:'I seek forgiveness from Allah (x3). O Allah, You are Peace and from You is peace.',src:'Muslim'},
 
-            {
-                cat: 'Prayer 🕌', icon: '🙏', title: 'Dua for Khushoo in Prayer', titleUr: 'خشوع کی دعا',
-                ar: 'اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْكُفْرِ وَالْفَقْرِ',
-                ur: 'اے اللہ! میں کفر اور فقر سے تیری پناہ مانگتا ہوں',
-                hl: 'Aye Allah! Main kufr aur tangi se teri panah maangta hoon. Namaz mein dil lagao.',
-                tr: "Allahumma inni a'udhu bika minal-kufri wal-faqr",
-                en: 'O Allah, I seek refuge in You from disbelief and poverty.', src: 'Abu Dawud, Nasai'
-            },
+  {cat:'Prayer 🕌',icon:'📿',title:'After Fajr & Maghrib (100x)',titleUr:'فجر و مغرب کے بعد',
+   ar:'لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ',
+   ur:'اللہ کے سوا کوئی معبود نہیں، وہ اکیلا ہے، اس کا کوئی شریک نہیں',
+   hl:'Allah ke alawa koi ibadaat ke laayq nahi, woh akela hai, koi saajhi nahi.',
+   tr:'La ilaha illallahu wahdahu la sharika lah',
+   en:'There is no god but Allah alone, with no partner or associate.',src:'Bukhari & Muslim'},
 
-            /* ─── EATING ─── */
-            {
-                cat: 'Eating 🍽', icon: '🍽', title: 'Before Eating', titleUr: 'کھانے سے پہلے',
-                ar: 'بِسْمِ اللهِ وَعَلَى بَرَكَةِ اللهِ',
-                ur: 'اللہ کے نام سے اور اللہ کی برکت پر',
-                hl: 'Allah ke naam se aur Allah ki barkat ke saath shuru karta hoon.',
-                tr: 'Bismillahi wa ala barakatillah',
-                en: 'In the name of Allah and with the blessings of Allah.', src: 'Abu Dawud'
-            },
+  {cat:'Prayer 🕌',icon:'🙏',title:'Dua for Khushoo in Prayer',titleUr:'خشوع کی دعا',
+   ar:'اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْكُفْرِ وَالْفَقْرِ',
+   ur:'اے اللہ! میں کفر اور فقر سے تیری پناہ مانگتا ہوں',
+   hl:'Aye Allah! Main kufr aur tangi se teri panah maangta hoon. Namaz mein dil lagao.',
+   tr:"Allahumma inni a'udhu bika minal-kufri wal-faqr",
+   en:'O Allah, I seek refuge in You from disbelief and poverty.',src:'Abu Dawud, Nasai'},
 
-            {
-                cat: 'Eating 🍽', icon: '🍽', title: 'After Eating', titleUr: 'کھانے کے بعد',
-                ar: 'الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا وَجَعَلَنَا مُسْلِمِينَ',
-                ur: 'تمام تعریفیں اللہ کے لیے جس نے ہمیں کھانا کھلایا اور پلایا اور مسلمان بنایا',
-                hl: 'Shukar hai Allah ka jis ne khana khilaya, paani pilaya aur Musalman banaya.',
-                tr: "Alhamdulillahil-ladhi at'amana wa saqana wa ja'alana muslimin",
-                en: 'All praise is for Allah who fed us, gave us drink, and made us Muslims.', src: 'Abu Dawud, Tirmidhi'
-            },
+  /* ─── EATING ─── */
+  {cat:'Eating 🍽',icon:'🍽',title:'Before Eating',titleUr:'کھانے سے پہلے',
+   ar:'بِسْمِ اللهِ وَعَلَى بَرَكَةِ اللهِ',
+   ur:'اللہ کے نام سے اور اللہ کی برکت پر',
+   hl:'Allah ke naam se aur Allah ki barkat ke saath shuru karta hoon.',
+   tr:'Bismillahi wa ala barakatillah',
+   en:'In the name of Allah and with the blessings of Allah.',src:'Abu Dawud'},
 
-            {
-                cat: 'Eating 🍽', icon: '💧', title: 'Before Drinking Water', titleUr: 'پانی پینے سے پہلے',
-                ar: 'بِسْمِ اللهِ',
-                ur: 'اللہ کے نام سے',
-                hl: 'Pani peene se pehle Bismillah paro. Ek dam mein mat piyo — teen ghunt mein piyo.',
-                tr: 'Bismillah',
-                en: 'Say Bismillah before drinking and drink in 3 sips — this is the Sunnah.', src: 'Bukhari'
-            },
+  {cat:'Eating 🍽',icon:'🍽',title:'After Eating',titleUr:'کھانے کے بعد',
+   ar:'الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا وَجَعَلَنَا مُسْلِمِينَ',
+   ur:'تمام تعریفیں اللہ کے لیے جس نے ہمیں کھانا کھلایا اور پلایا اور مسلمان بنایا',
+   hl:'Shukar hai Allah ka jis ne khana khilaya, paani pilaya aur Musalman banaya.',
+   tr:"Alhamdulillahil-ladhi at'amana wa saqana wa ja'alana muslimin",
+   en:'All praise is for Allah who fed us, gave us drink, and made us Muslims.',src:'Abu Dawud, Tirmidhi'},
 
-            {
-                cat: 'Eating 🍽', icon: '🍴', title: 'If Forgotten Bismillah', titleUr: 'Bismillah بھول جائیں',
-                ar: 'بِسْمِ اللهِ أَوَّلَهُ وَآخِرَهُ',
-                ur: 'شروع اور آخر دونوں میں اللہ کے نام سے',
-                hl: 'Agar khaane mein Bismillah bhool jao to yeh paro: Allah ke naam se — shuru mein bhi aur aakhir mein bhi.',
-                tr: "Bismillahi awwalahu wa akhirahu",
-                en: 'In the name of Allah at its beginning and its end.', src: 'Abu Dawud, Tirmidhi'
-            },
+  {cat:'Eating 🍽',icon:'💧',title:'Before Drinking Water',titleUr:'پانی پینے سے پہلے',
+   ar:'بِسْمِ اللهِ',
+   ur:'اللہ کے نام سے',
+   hl:'Pani peene se pehle Bismillah paro. Ek dam mein mat piyo — teen ghunt mein piyo.',
+   tr:'Bismillah',
+   en:'Say Bismillah before drinking and drink in 3 sips — this is the Sunnah.',src:'Bukhari'},
 
-            /* ─── SLEEP ─── */
-            {
-                cat: 'Sleep 😴', icon: '😴', title: 'Before Sleeping', titleUr: 'سونے سے پہلے',
-                ar: 'بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا',
-                ur: 'تیرے نام سے اے اللہ! مرتا ہوں اور زندہ ہوتا ہوں',
-                hl: 'Aye Allah! Tere naam se sota hoon aur tere naam se jagunga.',
-                tr: 'Bismika allahumma amutu wa ahya',
-                en: 'In Your name, O Allah, I die and I live.', src: 'Bukhari'
-            },
+  {cat:'Eating 🍽',icon:'🍴',title:'If Forgotten Bismillah',titleUr:'Bismillah بھول جائیں',
+   ar:'بِسْمِ اللهِ أَوَّلَهُ وَآخِرَهُ',
+   ur:'شروع اور آخر دونوں میں اللہ کے نام سے',
+   hl:'Agar khaane mein Bismillah bhool jao to yeh paro: Allah ke naam se — shuru mein bhi aur aakhir mein bhi.',
+   tr:"Bismillahi awwalahu wa akhirahu",
+   en:'In the name of Allah at its beginning and its end.',src:'Abu Dawud, Tirmidhi'},
 
-            {
-                cat: 'Sleep 😴', icon: '🌙', title: 'Ayatul Kursi Before Sleep', titleUr: 'سونے سے پہلے آیت الکرسی',
-                ar: 'اللَّهُ لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ',
-                ur: 'اللہ کے سوا کوئی معبود نہیں، وہ ہمیشہ زندہ اور قائم رہنے والا ہے',
-                hl: 'Sone se pehle Ayatul Kursi paro. Ek farishta aapki hifazat karta hai raat bhar.',
-                tr: 'Allahu la ilaha illa huwal-hayyul-qayyum',
-                en: 'Allah — there is no deity except Him, the Ever-Living, the Sustainer of existence.', src: 'Quran 2:255 — Bukhari'
-            },
+  /* ─── SLEEP ─── */
+  {cat:'Sleep 😴',icon:'😴',title:'Before Sleeping',titleUr:'سونے سے پہلے',
+   ar:'بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا',
+   ur:'تیرے نام سے اے اللہ! مرتا ہوں اور زندہ ہوتا ہوں',
+   hl:'Aye Allah! Tere naam se sota hoon aur tere naam se jagunga.',
+   tr:'Bismika allahumma amutu wa ahya',
+   en:'In Your name, O Allah, I die and I live.',src:'Bukhari'},
 
-            {
-                cat: 'Sleep 😴', icon: '🤲', title: '3 Quls Before Sleep', titleUr: 'سونے سے پہلے تین قل',
-                ar: 'قُلْ هُوَ اللَّهُ أَحَدٌ — قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ — قُلْ أَعُوذُ بِرَبِّ النَّاسِ',
-                ur: 'سورۃ الاخلاص، سورۃ الفلق، سورۃ الناس — تین تین بار پڑھو',
-                hl: 'Surah Ikhlas, Surah Falaq, Surah Naas — teen teen baar paro, haath par phunko, poore badan par phero.',
-                tr: 'Qul Huwallahu Ahad, Qul A\'udhu Birabbil Falaq, Qul A\'udhu Birabbin-Nas (×3)',
-                en: 'Recite Surah Ikhlas, Falaq, and Naas 3 times, blow on your palms and wipe over your body.', src: 'Bukhari'
-            },
+  {cat:'Sleep 😴',icon:'🌙',title:'Ayatul Kursi Before Sleep',titleUr:'سونے سے پہلے آیت الکرسی',
+   ar:'اللَّهُ لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ',
+   ur:'اللہ کے سوا کوئی معبود نہیں، وہ ہمیشہ زندہ اور قائم رہنے والا ہے',
+   hl:'Sone se pehle Ayatul Kursi paro. Ek farishta aapki hifazat karta hai raat bhar.',
+   tr:'Allahu la ilaha illa huwal-hayyul-qayyum',
+   en:'Allah — there is no deity except Him, the Ever-Living, the Sustainer of existence.',src:'Quran 2:255 — Bukhari'},
 
-            {
-                cat: 'Sleep 😴', icon: '😌', title: 'Dua for Good Dreams', titleUr: 'اچھے خواب کی دعا',
-                ar: 'اللَّهُمَّ إِنِّي أَسْأَلُكَ رُؤْيَا صَالِحَةً',
-                ur: 'اے اللہ! میں تجھ سے اچھا خواب مانگتا ہوں',
-                hl: 'Aye Allah! Mujhe acha khwab dikhana. Bure khwab se teri panah maangta hoon.',
-                tr: "Allahumma inni as'aluka ru'ya saliha",
-                en: 'O Allah, I ask You for a righteous dream.', src: 'Various'
-            },
+  {cat:'Sleep 😴',icon:'🤲',title:'3 Quls Before Sleep',titleUr:'سونے سے پہلے تین قل',
+   ar:'قُلْ هُوَ اللَّهُ أَحَدٌ — قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ — قُلْ أَعُوذُ بِرَبِّ النَّاسِ',
+   ur:'سورۃ الاخلاص، سورۃ الفلق، سورۃ الناس — تین تین بار پڑھو',
+   hl:'Surah Ikhlas, Surah Falaq, Surah Naas — teen teen baar paro, haath par phunko, poore badan par phero.',
+   tr:'Qul Huwallahu Ahad, Qul A\'udhu Birabbil Falaq, Qul A\'udhu Birabbin-Nas (×3)',
+   en:'Recite Surah Ikhlas, Falaq, and Naas 3 times, blow on your palms and wipe over your body.',src:'Bukhari'},
 
-            /* ─── TRAVEL ─── */
-            {
-                cat: 'Travel ✈️', icon: '✈️', title: 'Dua for Travelling', titleUr: 'سفر کی دعا',
-                ar: 'سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَٰذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ',
-                ur: 'پاک ہے وہ جس نے ہمارے لیے اسے مسخر کیا اور ہم اسے قابو نہ کر سکتے تھے',
-                hl: 'Pak hai woh Allah jis ne yeh sawaari hamare liye theek ki. Hum khud qabu nahi kar sakte the.',
-                tr: "Subhanal-ladhi sakhkhara lana hadha wa ma kunna lahu muqrinin",
-                en: 'Glory be to the One Who subjected this to us; we could never have accomplished this by ourselves.', src: 'Quran 43:13'
-            },
+  {cat:'Sleep 😴',icon:'😌',title:'Dua for Good Dreams',titleUr:'اچھے خواب کی دعا',
+   ar:'اللَّهُمَّ إِنِّي أَسْأَلُكَ رُؤْيَا صَالِحَةً',
+   ur:'اے اللہ! میں تجھ سے اچھا خواب مانگتا ہوں',
+   hl:'Aye Allah! Mujhe acha khwab dikhana. Bure khwab se teri panah maangta hoon.',
+   tr:"Allahumma inni as'aluka ru'ya saliha",
+   en:'O Allah, I ask You for a righteous dream.',src:'Various'},
 
-            {
-                cat: 'Travel ✈️', icon: '🚗', title: 'Dua Entering a Car / Vehicle', titleUr: 'گاڑی میں بیٹھنے کی دعا',
-                ar: 'بِسْمِ اللَّهِ، الْحَمْدُ لِلَّهِ، سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا',
-                ur: 'اللہ کے نام سے، تمام تعریفیں اللہ کے لیے، پاک ہے وہ ذات جس نے یہ ہمارے لیے مسخر کی',
-                hl: 'Bismillah, Alhamdulillah, SubhanAllah — gaari mein baithe to yeh paro.',
-                tr: 'Bismillah, alhamdulillah, subhanal-ladhi sakhkhara lana hadha',
-                en: 'In the name of Allah, all praise is to Allah, glory be to the One who subjected this to us.', src: 'Abu Dawud, Tirmidhi'
-            },
+  /* ─── TRAVEL ─── */
+  {cat:'Travel ✈️',icon:'✈️',title:'Dua for Travelling',titleUr:'سفر کی دعا',
+   ar:'سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَٰذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ',
+   ur:'پاک ہے وہ جس نے ہمارے لیے اسے مسخر کیا اور ہم اسے قابو نہ کر سکتے تھے',
+   hl:'Pak hai woh Allah jis ne yeh sawaari hamare liye theek ki. Hum khud qabu nahi kar sakte the.',
+   tr:"Subhanal-ladhi sakhkhara lana hadha wa ma kunna lahu muqrinin",
+   en:'Glory be to the One Who subjected this to us; we could never have accomplished this by ourselves.',src:'Quran 43:13'},
 
-            {
-                cat: 'Travel ✈️', icon: '🏠', title: 'Returning Home from Travel', titleUr: 'سفر سے واپسی',
-                ar: 'آيِبُونَ، تَائِبُونَ، عَابِدُونَ، لِرَبِّنَا حَامِدُونَ',
-                ur: 'لوٹنے والے، توبہ کرنے والے، عبادت کرنے والے، اپنے رب کی تعریف کرنے والے ہیں',
-                hl: 'Hum laut aaye, tauba karte hue, ibadat karte hue, apne Rabb ki tarif karte hue.',
-                tr: 'Ayibuna, taibuna, abiduna, lirabbina hamidun',
-                en: 'We are returning, repenting, worshipping, and praising our Lord.', src: 'Bukhari'
-            },
+  {cat:'Travel ✈️',icon:'🚗',title:'Dua Entering a Car / Vehicle',titleUr:'گاڑی میں بیٹھنے کی دعا',
+   ar:'بِسْمِ اللَّهِ، الْحَمْدُ لِلَّهِ، سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا',
+   ur:'اللہ کے نام سے، تمام تعریفیں اللہ کے لیے، پاک ہے وہ ذات جس نے یہ ہمارے لیے مسخر کی',
+   hl:'Bismillah, Alhamdulillah, SubhanAllah — gaari mein baithe to yeh paro.',
+   tr:'Bismillah, alhamdulillah, subhanal-ladhi sakhkhara lana hadha',
+   en:'In the name of Allah, all praise is to Allah, glory be to the One who subjected this to us.',src:'Abu Dawud, Tirmidhi'},
 
-            /* ─── ANXIETY & WORRY ─── */
-            {
-                cat: 'Anxiety 💚', icon: '💚', title: 'Dua for Worry & Grief', titleUr: 'پریشانی کی دعا',
-                ar: 'اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ وَالْعَجْزِ وَالْكَسَلِ',
-                ur: 'اے اللہ! میں فکر، غم، کمزوری اور سستی سے تیری پناہ مانگتا ہوں',
-                hl: 'Aye Allah! Pareshan, udaas, kamzori aur sasti se teri panah maangta hoon.',
-                tr: "Allahumma inni a'udhu bika minal-hammi wal-hazani wal-'ajzi wal-kasali",
-                en: 'O Allah, I seek refuge in You from worry, grief, incapacity, and laziness.', src: 'Bukhari'
-            },
+  {cat:'Travel ✈️',icon:'🏠',title:'Returning Home from Travel',titleUr:'سفر سے واپسی',
+   ar:'آيِبُونَ، تَائِبُونَ، عَابِدُونَ، لِرَبِّنَا حَامِدُونَ',
+   ur:'لوٹنے والے، توبہ کرنے والے، عبادت کرنے والے، اپنے رب کی تعریف کرنے والے ہیں',
+   hl:'Hum laut aaye, tauba karte hue, ibadat karte hue, apne Rabb ki tarif karte hue.',
+   tr:'Ayibuna, taibuna, abiduna, lirabbina hamidun',
+   en:'We are returning, repenting, worshipping, and praising our Lord.',src:'Bukhari'},
 
-            {
-                cat: 'Anxiety 💚', icon: '🌊', title: 'Dua of Prophet Yunus ﷺ', titleUr: 'حضرت یونس کی دعا',
-                ar: 'لَّا إِلَٰهَ إِلَّا أَنتَ سُبْحَانَكَ إِنِّي كُنتُ مِنَ الظَّالِمِينَ',
-                ur: 'تیرے سوا کوئی معبود نہیں، تو پاک ہے، بے شک میں ظالموں میں سے تھا',
-                hl: 'Tere alawa koi mabood nahi, tu pak hai. Beshak main ne khud apne aap par zulm kiya.',
-                tr: 'La ilaha illa anta subhanaka inni kuntu minaz-zalimin',
-                en: 'There is no god but You; glory be to You. Indeed I have been of the wrongdoers.', src: 'Quran 21:87'
-            },
+  /* ─── ANXIETY & WORRY ─── */
+  {cat:'Anxiety 💚',icon:'💚',title:'Dua for Worry & Grief',titleUr:'پریشانی کی دعا',
+   ar:'اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ وَالْعَجْزِ وَالْكَسَلِ',
+   ur:'اے اللہ! میں فکر، غم، کمزوری اور سستی سے تیری پناہ مانگتا ہوں',
+   hl:'Aye Allah! Pareshan, udaas, kamzori aur sasti se teri panah maangta hoon.',
+   tr:"Allahumma inni a'udhu bika minal-hammi wal-hazani wal-'ajzi wal-kasali",
+   en:'O Allah, I seek refuge in You from worry, grief, incapacity, and laziness.',src:'Bukhari'},
 
-            {
-                cat: 'Anxiety 💚', icon: '🤍', title: 'Hasbunallah', titleUr: 'حسبنا اللہ',
-                ar: 'حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ',
-                ur: 'ہمیں اللہ کافی ہے اور وہ بہترین کارساز ہے',
-                hl: 'Allah humara kafi hai aur woh sab se behtar kaam karne wala hai. Mushkil mein yeh paro.',
-                tr: "Hasbunallahu wa ni'mal wakil",
-                en: 'Allah is sufficient for us, and He is the best disposer of affairs.', src: 'Quran 3:173 — Bukhari'
-            },
+  {cat:'Anxiety 💚',icon:'🌊',title:'Dua of Prophet Yunus ﷺ',titleUr:'حضرت یونس کی دعا',
+   ar:'لَّا إِلَٰهَ إِلَّا أَنتَ سُبْحَانَكَ إِنِّي كُنتُ مِنَ الظَّالِمِينَ',
+   ur:'تیرے سوا کوئی معبود نہیں، تو پاک ہے، بے شک میں ظالموں میں سے تھا',
+   hl:'Tere alawa koi mabood nahi, tu pak hai. Beshak main ne khud apne aap par zulm kiya.',
+   tr:'La ilaha illa anta subhanaka inni kuntu minaz-zalimin',
+   en:'There is no god but You; glory be to You. Indeed I have been of the wrongdoers.',src:'Quran 21:87'},
 
-            {
-                cat: 'Anxiety 💚', icon: '☁️', title: 'Dua for Depression & Hardship', titleUr: 'مشکل وقت کی دعا',
-                ar: 'اللَّهُمَّ رَحْمَتَكَ أَرْجُو فَلَا تَكِلْنِي إِلَى نَفْسِي طَرْفَةَ عَيْنٍ',
-                ur: 'اے اللہ! میں تیری رحمت کی امید رکھتا ہوں، مجھے ایک پل کے لیے بھی اپنے نفس کے سپرد نہ کر',
-                hl: 'Aye Allah! Teri rehmat ki umeed hai. Ek pal ke liye bhi mujhe meri nafas ke hawale mat kar.',
-                tr: "Allahumma rahmataka arju fala takilni ila nafsi tarfata 'ayn",
-                en: "O Allah, I hope for Your mercy, so do not leave me to myself even for the blink of an eye.", src: 'Abu Dawud'
-            },
+  {cat:'Anxiety 💚',icon:'🤍',title:'Hasbunallah',titleUr:'حسبنا اللہ',
+   ar:'حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ',
+   ur:'ہمیں اللہ کافی ہے اور وہ بہترین کارساز ہے',
+   hl:'Allah humara kafi hai aur woh sab se behtar kaam karne wala hai. Mushkil mein yeh paro.',
+   tr:"Hasbunallahu wa ni'mal wakil",
+   en:'Allah is sufficient for us, and He is the best disposer of affairs.',src:'Quran 3:173 — Bukhari'},
 
-            {
-                cat: 'Anxiety 💚', icon: '🌟', title: 'La Hawla Wala Quwwata', titleUr: 'لا حول ولا قوۃ',
-                ar: 'لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللهِ الْعَلِيِّ الْعَظِيمِ',
-                ur: 'نہ کوئی طاقت ہے اور نہ قوت مگر اللہ عالی و عظیم کے ساتھ',
-                hl: 'Na koi taaqat hai na koi quwwat magar Allah Azeem ki madad se. Jannati daulat hai yeh.',
-                tr: "La hawla wala quwwata illa billahil-'aliyyil-'azim",
-                en: 'There is no power or might except with Allah, the Most High, the Almighty.', src: 'Bukhari'
-            },
+  {cat:'Anxiety 💚',icon:'☁️',title:'Dua for Depression & Hardship',titleUr:'مشکل وقت کی دعا',
+   ar:'اللَّهُمَّ رَحْمَتَكَ أَرْجُو فَلَا تَكِلْنِي إِلَى نَفْسِي طَرْفَةَ عَيْنٍ',
+   ur:'اے اللہ! میں تیری رحمت کی امید رکھتا ہوں، مجھے ایک پل کے لیے بھی اپنے نفس کے سپرد نہ کر',
+   hl:'Aye Allah! Teri rehmat ki umeed hai. Ek pal ke liye bhi mujhe meri nafas ke hawale mat kar.',
+   tr:"Allahumma rahmataka arju fala takilni ila nafsi tarfata 'ayn",
+   en:"O Allah, I hope for Your mercy, so do not leave me to myself even for the blink of an eye.",src:'Abu Dawud'},
 
-            /* ─── FORGIVENESS ─── */
-            {
-                cat: 'Forgiveness 🌿', icon: '🌿', title: 'Sayyidul Istighfar (Master Dua)', titleUr: 'سید الاستغفار',
-                ar: 'اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَٰهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ',
-                ur: 'اے اللہ! تو میرا رب ہے، تیرے سوا کوئی معبود نہیں۔ تو نے مجھے پیدا کیا اور میں تیرا بندہ ہوں',
-                hl: 'Aye Allah tu mera Rabb hai. Tere alawa koi mabood nahi. Tu ne mujhe banaya aur main tera banda hoon.',
-                tr: 'Allahumma anta rabbi la ilaha illa anta, khalaqtani wa ana abduka, wa ana \'ala \'ahdika wa wa\'dika mastata\'tu',
-                en: 'O Allah, You are my Lord, none has the right to be worshipped but You. You created me and I am Your servant.', src: 'Bukhari'
-            },
+  {cat:'Anxiety 💚',icon:'🌟',title:'La Hawla Wala Quwwata',titleUr:'لا حول ولا قوۃ',
+   ar:'لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللهِ الْعَلِيِّ الْعَظِيمِ',
+   ur:'نہ کوئی طاقت ہے اور نہ قوت مگر اللہ عالی و عظیم کے ساتھ',
+   hl:'Na koi taaqat hai na koi quwwat magar Allah Azeem ki madad se. Jannati daulat hai yeh.',
+   tr:"La hawla wala quwwata illa billahil-'aliyyil-'azim",
+   en:'There is no power or might except with Allah, the Most High, the Almighty.',src:'Bukhari'},
 
-            {
-                cat: 'Forgiveness 🌿', icon: '🌿', title: 'Complete Istighfar', titleUr: 'مکمل استغفار',
-                ar: 'أَسْتَغْفِرُ اللَّهَ الْعَظِيمَ الَّذِي لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ وَأَتُوبُ إِلَيْهِ',
-                ur: 'میں اللہ عظیم سے معافی مانگتا ہوں جس کے سوا کوئی معبود نہیں، وہ ہمیشہ زندہ اور قائم رہنے والا ہے',
-                hl: 'Allah Azeem se maafi mangta hoon — woh zinda aur qaim hai. Aur main us ki taraf rujoo karta hoon.',
-                tr: "Astaghfirullaha al-'azim alladhi la ilaha illa huwal-hayyul-qayyumu wa atubu ilayh",
-                en: 'I seek forgiveness from Allah the Magnificent, besides Whom there is none worthy of worship, the Ever-Living, the Sustainer, and I repent to Him.', src: 'Abu Dawud, Tirmidhi'
-            },
+  /* ─── FORGIVENESS ─── */
+  {cat:'Forgiveness 🌿',icon:'🌿',title:'Sayyidul Istighfar (Master Dua)',titleUr:'سید الاستغفار',
+   ar:'اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَٰهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ',
+   ur:'اے اللہ! تو میرا رب ہے، تیرے سوا کوئی معبود نہیں۔ تو نے مجھے پیدا کیا اور میں تیرا بندہ ہوں',
+   hl:'Aye Allah tu mera Rabb hai. Tere alawa koi mabood nahi. Tu ne mujhe banaya aur main tera banda hoon.',
+   tr:'Allahumma anta rabbi la ilaha illa anta, khalaqtani wa ana abduka, wa ana \'ala \'ahdika wa wa\'dika mastata\'tu',
+   en:'O Allah, You are my Lord, none has the right to be worshipped but You. You created me and I am Your servant.',src:'Bukhari'},
 
-            {
-                cat: 'Forgiveness 🌿', icon: '💧', title: 'Dua After Sinning', titleUr: 'گناہ کے بعد دعا',
-                ar: 'رَبِّ إِنِّي ظَلَمْتُ نَفْسِي فَاغْفِرْ لِي',
-                ur: 'اے میرے رب! میں نے اپنے آپ پر ظلم کیا پس مجھے بخش دے',
-                hl: 'Aye Rabb! Main ne khud par zulm kiya. Mujhe maaf kar de. Sirf tu hi maaf karta hai.',
-                tr: 'Rabbi inni zalamtu nafsi faghfir li',
-                en: 'O my Lord! Indeed I have wronged myself, so forgive me.', src: 'Quran — Bukhari'
-            },
+  {cat:'Forgiveness 🌿',icon:'🌿',title:'Complete Istighfar',titleUr:'مکمل استغفار',
+   ar:'أَسْتَغْفِرُ اللَّهَ الْعَظِيمَ الَّذِي لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ وَأَتُوبُ إِلَيْهِ',
+   ur:'میں اللہ عظیم سے معافی مانگتا ہوں جس کے سوا کوئی معبود نہیں، وہ ہمیشہ زندہ اور قائم رہنے والا ہے',
+   hl:'Allah Azeem se maafi mangta hoon — woh zinda aur qaim hai. Aur main us ki taraf rujoo karta hoon.',
+   tr:"Astaghfirullaha al-'azim alladhi la ilaha illa huwal-hayyul-qayyumu wa atubu ilayh",
+   en:'I seek forgiveness from Allah the Magnificent, besides Whom there is none worthy of worship, the Ever-Living, the Sustainer, and I repent to Him.',src:'Abu Dawud, Tirmidhi'},
 
-            /* ─── DUAS FOR FAMILY ─── */
-            {
-                cat: 'Family 👨‍👩‍👧', icon: '👨‍👩‍👧', title: 'Dua for Good Spouse', titleUr: 'اچھے جیون ساتھی کی دعا',
-                ar: 'رَبَّنَا هَبْ لَنَا مِنْ أَزْوَاجِنَا وَذُرِّيَّاتِنَا قُرَّةَ أَعْيُنٍ',
-                ur: 'اے ہمارے رب! ہمیں ہماری بیویوں اور اولاد سے آنکھوں کی ٹھنڈک عطا فرما',
-                hl: 'Aye Rabb! Hamare biwi/shohar aur bachon ko hamare liye aankhon ki thandak bana de.',
-                tr: "Rabbana hab lana min azwajina wa dhurriyyatina qurrata a'yun",
-                en: "Our Lord, grant us from among our wives and offspring comfort to our eyes.", src: 'Quran 25:74'
-            },
+  {cat:'Forgiveness 🌿',icon:'💧',title:'Dua After Sinning',titleUr:'گناہ کے بعد دعا',
+   ar:'رَبِّ إِنِّي ظَلَمْتُ نَفْسِي فَاغْفِرْ لِي',
+   ur:'اے میرے رب! میں نے اپنے آپ پر ظلم کیا پس مجھے بخش دے',
+   hl:'Aye Rabb! Main ne khud par zulm kiya. Mujhe maaf kar de. Sirf tu hi maaf karta hai.',
+   tr:'Rabbi inni zalamtu nafsi faghfir li',
+   en:'O my Lord! Indeed I have wronged myself, so forgive me.',src:'Quran — Bukhari'},
 
-            {
-                cat: 'Family 👨‍👩‍👧', icon: '🤲', title: 'Dua for Parents', titleUr: 'والدین کے لیے دعا',
-                ar: 'رَّبِّ ارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا',
-                ur: 'اے میرے رب! ان دونوں پر رحم فرما جیسا انہوں نے بچپن میں میری پرورش کی',
-                hl: 'Aye Rabb! Mere Ammi Abbu par woh reham kar jaise unhon ne mujhe chota sa pal ke bade kiya.',
-                tr: 'Rabbi irhamhuma kama rabbayani saghira',
-                en: 'My Lord, have mercy upon them as they brought me up when I was small.', src: 'Quran 17:24'
-            },
+  /* ─── DUAS FOR FAMILY ─── */
+  {cat:'Family 👨‍👩‍👧',icon:'👨‍👩‍👧',title:'Dua for Good Spouse',titleUr:'اچھے جیون ساتھی کی دعا',
+   ar:'رَبَّنَا هَبْ لَنَا مِنْ أَزْوَاجِنَا وَذُرِّيَّاتِنَا قُرَّةَ أَعْيُنٍ',
+   ur:'اے ہمارے رب! ہمیں ہماری بیویوں اور اولاد سے آنکھوں کی ٹھنڈک عطا فرما',
+   hl:'Aye Rabb! Hamare biwi/shohar aur bachon ko hamare liye aankhon ki thandak bana de.',
+   tr:"Rabbana hab lana min azwajina wa dhurriyyatina qurrata a'yun",
+   en:"Our Lord, grant us from among our wives and offspring comfort to our eyes.",src:'Quran 25:74'},
 
-            {
-                cat: 'Family 👨‍👩‍👧', icon: '👶', title: 'Dua for Righteous Children', titleUr: 'نیک اولاد کی دعا',
-                ar: 'رَبِّ هَبْ لِي مِن لَّدُنكَ ذُرِّيَّةً طَيِّبَةً',
-                ur: 'اے میرے رب! مجھے اپنی جانب سے پاکیزہ اولاد عطا فرما',
-                hl: 'Aye Rabb! Mujhe apni taraf se neek pak aur sacchi aulad de.',
-                tr: 'Rabbi hab li min ladunka dhurriyyatan tayyibah',
-                en: 'My Lord, grant me from Yourself a good offspring.', src: 'Quran 3:38'
-            },
+  {cat:'Family 👨‍👩‍👧',icon:'🤲',title:'Dua for Parents',titleUr:'والدین کے لیے دعا',
+   ar:'رَّبِّ ارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا',
+   ur:'اے میرے رب! ان دونوں پر رحم فرما جیسا انہوں نے بچپن میں میری پرورش کی',
+   hl:'Aye Rabb! Mere Ammi Abbu par woh reham kar jaise unhon ne mujhe chota sa pal ke bade kiya.',
+   tr:'Rabbi irhamhuma kama rabbayani saghira',
+   en:'My Lord, have mercy upon them as they brought me up when I was small.',src:'Quran 17:24'},
 
-            /* ─── HEALTH ─── */
-            {
-                cat: 'Health 🏥', icon: '🏥', title: 'Dua for Shifa (Healing)', titleUr: 'شفا کی دعا',
-                ar: 'اللَّهُمَّ رَبَّ النَّاسِ أَذْهِبِ الْبَأْسَ وَاشْفِ أَنْتَ الشَّافِي',
-                ur: 'اے اللہ! لوگوں کے رب! تکلیف دور کر دے اور شفا عطا فرما، تو ہی شفا دینے والا ہے',
-                hl: 'Aye Allah insanon ke Rabb! Takleef door kar de. Tu hi shifa deta hai. Koi shifa teri shifa jaisi nahi.',
-                tr: "Allahumma rabban-nasi adhhibil-ba'sa washfi antash-shafi",
-                en: 'O Allah, Lord of the people, remove the affliction and grant healing, for You are the Healer.', src: 'Bukhari'
-            },
+  {cat:'Family 👨‍👩‍👧',icon:'👶',title:'Dua for Righteous Children',titleUr:'نیک اولاد کی دعا',
+   ar:'رَبِّ هَبْ لِي مِن لَّدُنكَ ذُرِّيَّةً طَيِّبَةً',
+   ur:'اے میرے رب! مجھے اپنی جانب سے پاکیزہ اولاد عطا فرما',
+   hl:'Aye Rabb! Mujhe apni taraf se neek pak aur sacchi aulad de.',
+   tr:'Rabbi hab li min ladunka dhurriyyatan tayyibah',
+   en:'My Lord, grant me from Yourself a good offspring.',src:'Quran 3:38'},
 
-            {
-                cat: 'Health 🏥', icon: '💊', title: 'Visiting the Sick', titleUr: 'مریض کی عیادت',
-                ar: 'لَا بَأْسَ طَهُورٌ إِنْ شَاءَ اللهُ',
-                ur: 'کوئی حرج نہیں، یہ پاکیزگی ہے، ان شاء اللہ',
-                hl: 'Ghabraao mat — yeh bimari gunahon ko saaf kar deti hai, inshAllah.',
-                tr: "La ba'sa tahurun insha'Allah",
-                en: 'Do not worry, it is a purification, God willing.', src: 'Bukhari'
-            },
+  /* ─── HEALTH ─── */
+  {cat:'Health 🏥',icon:'🏥',title:'Dua for Shifa (Healing)',titleUr:'شفا کی دعا',
+   ar:'اللَّهُمَّ رَبَّ النَّاسِ أَذْهِبِ الْبَأْسَ وَاشْفِ أَنْتَ الشَّافِي',
+   ur:'اے اللہ! لوگوں کے رب! تکلیف دور کر دے اور شفا عطا فرما، تو ہی شفا دینے والا ہے',
+   hl:'Aye Allah insanon ke Rabb! Takleef door kar de. Tu hi shifa deta hai. Koi shifa teri shifa jaisi nahi.',
+   tr:"Allahumma rabban-nasi adhhibil-ba'sa washfi antash-shafi",
+   en:'O Allah, Lord of the people, remove the affliction and grant healing, for You are the Healer.',src:'Bukhari'},
 
-            {
-                cat: 'Health 🏥', icon: '🫀', title: 'Ruqyah — Self Healing', titleUr: 'خود پر دم',
-                ar: 'بِسْمِ اللهِ أَرْقِيكَ، مِنْ كُلِّ شَيْءٍ يُؤْذِيكَ، مِنْ شَرِّ كُلِّ نَفْسٍ أَوْ عَيْنٍ حَاسِدٍ',
-                ur: 'اللہ کے نام سے تجھے دم کرتا ہوں، ہر اس چیز سے جو تجھے تکلیف دے، ہر نفس یا حاسد کی نظر سے',
-                hl: 'Allah ke naam se tujhe dam karta hoon. Har takleef se, nafsani aur hasad ki nazar se. Allah shifa de.',
-                tr: "Bismillahi arqika, min kulli shay'in yu'dhika, min sharri kulli nafsin aw 'aynin hasid",
-                en: 'In the name of Allah I perform ruqyah for you, from everything that harms you, from the evil eye of every envious soul.', src: 'Muslim'
-            },
+  {cat:'Health 🏥',icon:'💊',title:'Visiting the Sick',titleUr:'مریض کی عیادت',
+   ar:'لَا بَأْسَ طَهُورٌ إِنْ شَاءَ اللهُ',
+   ur:'کوئی حرج نہیں، یہ پاکیزگی ہے، ان شاء اللہ',
+   hl:'Ghabraao mat — yeh bimari gunahon ko saaf kar deti hai, inshAllah.',
+   tr:"La ba'sa tahurun insha'Allah",
+   en:'Do not worry, it is a purification, God willing.',src:'Bukhari'},
 
-            /* ─── KNOWLEDGE ─── */
-            {
-                cat: 'Knowledge 📚', icon: '📚', title: 'Dua for Knowledge', titleUr: 'علم کی دعا',
-                ar: 'رَّبِّ زِدْنِي عِلْمًا',
-                ur: 'اے میرے رب! میرے علم میں اضافہ فرما',
-                hl: 'Aye Rabb! Mera ilm barha de. Jab bhi padhne baithon yeh paro.',
-                tr: "Rabbi zidni 'ilma",
-                en: 'O My Lord, increase me in knowledge.', src: 'Quran 20:114'
-            },
+  {cat:'Health 🏥',icon:'🫀',title:'Ruqyah — Self Healing',titleUr:'خود پر دم',
+   ar:'بِسْمِ اللهِ أَرْقِيكَ، مِنْ كُلِّ شَيْءٍ يُؤْذِيكَ، مِنْ شَرِّ كُلِّ نَفْسٍ أَوْ عَيْنٍ حَاسِدٍ',
+   ur:'اللہ کے نام سے تجھے دم کرتا ہوں، ہر اس چیز سے جو تجھے تکلیف دے، ہر نفس یا حاسد کی نظر سے',
+   hl:'Allah ke naam se tujhe dam karta hoon. Har takleef se, nafsani aur hasad ki nazar se. Allah shifa de.',
+   tr:"Bismillahi arqika, min kulli shay'in yu'dhika, min sharri kulli nafsin aw 'aynin hasid",
+   en:'In the name of Allah I perform ruqyah for you, from everything that harms you, from the evil eye of every envious soul.',src:'Muslim'},
 
-            {
-                cat: 'Knowledge 📚', icon: '📖', title: 'Before Studying', titleUr: 'پڑھنے سے پہلے',
-                ar: 'اللَّهُمَّ انْفَعْنِي بِمَا عَلَّمْتَنِي وَعَلِّمْنِي مَا يَنْفَعُنِي',
-                ur: 'اے اللہ! جو تو نے مجھے سکھایا اس سے مجھے فائدہ پہنچا اور مجھے وہ علم سکھا جو مجھے فائدہ دے',
-                hl: 'Aye Allah! Jo tune sikhaaya usse faida de, aur jo mujhe faida de woh sikhaa.',
-                tr: "Allahumma infa'ni bima allamtani wa 'allimni ma yanfa'uni",
-                en: 'O Allah, benefit me with what You have taught me, and teach me what will benefit me.', src: 'Ibn Majah, Tirmidhi'
-            },
+  /* ─── KNOWLEDGE ─── */
+  {cat:'Knowledge 📚',icon:'📚',title:'Dua for Knowledge',titleUr:'علم کی دعا',
+   ar:'رَّبِّ زِدْنِي عِلْمًا',
+   ur:'اے میرے رب! میرے علم میں اضافہ فرما',
+   hl:'Aye Rabb! Mera ilm barha de. Jab bhi padhne baithon yeh paro.',
+   tr:"Rabbi zidni 'ilma",
+   en:'O My Lord, increase me in knowledge.',src:'Quran 20:114'},
 
-            {
-                cat: 'Knowledge 📚', icon: '🎓', title: 'Before Exam / Test', titleUr: 'امتحان سے پہلے',
-                ar: 'رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي وَاحْلُلْ عُقْدَةً مِّن لِّسَانِي',
-                ur: 'اے میرے رب! میرا سینہ کھول دے، میرا کام آسان کر دے اور میری زبان کی گرہ کھول دے',
-                hl: 'Aye Rabb! Mera seena khol de, kaam aasaan kar de, aur meri zaban ki gaanth khol de.',
-                tr: "Rabbi ishrah li sadri wa yassir li amri wahlul 'uqdatan min lisani",
-                en: 'O my Lord, expand my breast, ease my task for me, and remove the impediment from my speech.', src: 'Quran 20:25-28'
-            },
+  {cat:'Knowledge 📚',icon:'📖',title:'Before Studying',titleUr:'پڑھنے سے پہلے',
+   ar:'اللَّهُمَّ انْفَعْنِي بِمَا عَلَّمْتَنِي وَعَلِّمْنِي مَا يَنْفَعُنِي',
+   ur:'اے اللہ! جو تو نے مجھے سکھایا اس سے مجھے فائدہ پہنچا اور مجھے وہ علم سکھا جو مجھے فائدہ دے',
+   hl:'Aye Allah! Jo tune sikhaaya usse faida de, aur jo mujhe faida de woh sikhaa.',
+   tr:"Allahumma infa'ni bima allamtani wa 'allimni ma yanfa'uni",
+   en:'O Allah, benefit me with what You have taught me, and teach me what will benefit me.',src:'Ibn Majah, Tirmidhi'},
 
-            /* ─── RIZQ ─── */
-            {
-                cat: 'Rizq 💰', icon: '💰', title: 'Dua for Rizq & Barakah', titleUr: 'رزق اور برکت کی دعا',
-                ar: 'اللَّهُمَّ اكْفِنِي بِحَلَالِكَ عَنْ حَرَامِكَ وَأَغْنِنِي بِفَضْلِكَ عَمَّن سِوَاكَ',
-                ur: 'اے اللہ! مجھے حلال سے حرام سے بے نیاز کر دے اور اپنے فضل سے مجھے اپنے غیر سے بے نیاز کر',
-                hl: 'Aye Allah! Halal rozi se mujhe haraam se bachaa. Apne fazl se mujhe ghair ka mohtaj mat kar.',
-                tr: "Allahumma akfini bihalalika 'an haramika wa aghnini bifadlika 'amman siwak",
-                en: 'O Allah, suffice me with what is lawful against what is unlawful, and enrich me by Your grace so I need none but You.', src: 'Tirmidhi'
-            },
+  {cat:'Knowledge 📚',icon:'🎓',title:'Before Exam / Test',titleUr:'امتحان سے پہلے',
+   ar:'رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي وَاحْلُلْ عُقْدَةً مِّن لِّسَانِي',
+   ur:'اے میرے رب! میرا سینہ کھول دے، میرا کام آسان کر دے اور میری زبان کی گرہ کھول دے',
+   hl:'Aye Rabb! Mera seena khol de, kaam aasaan kar de, aur meri zaban ki gaanth khol de.',
+   tr:"Rabbi ishrah li sadri wa yassir li amri wahlul 'uqdatan min lisani",
+   en:'O my Lord, expand my breast, ease my task for me, and remove the impediment from my speech.',src:'Quran 20:25-28'},
 
-            {
-                cat: 'Rizq 💰', icon: '🌾', title: 'Dua for Barakah in Wealth', titleUr: 'مال میں برکت کی دعا',
-                ar: 'اللَّهُمَّ بَارِكْ لَنَا فِيمَا رَزَقْتَنَا وَقِنَا عَذَابَ النَّارِ',
-                ur: 'اے اللہ! جو تو نے ہمیں رزق دیا اس میں برکت عطا فرما اور ہمیں جہنم کے عذاب سے بچا',
-                hl: 'Aye Allah! Jo tu ne rozi di us mein barkat de aur humen jahannam ke azaab se bacha.',
-                tr: 'Allahumma barik lana fima razaqtana waqina adhaban-nar',
-                en: 'O Allah, bless for us what You have provided for us, and protect us from the torment of the Fire.', src: 'Various'
-            },
+  /* ─── RIZQ ─── */
+  {cat:'Rizq 💰',icon:'💰',title:'Dua for Rizq & Barakah',titleUr:'رزق اور برکت کی دعا',
+   ar:'اللَّهُمَّ اكْفِنِي بِحَلَالِكَ عَنْ حَرَامِكَ وَأَغْنِنِي بِفَضْلِكَ عَمَّن سِوَاكَ',
+   ur:'اے اللہ! مجھے حلال سے حرام سے بے نیاز کر دے اور اپنے فضل سے مجھے اپنے غیر سے بے نیاز کر',
+   hl:'Aye Allah! Halal rozi se mujhe haraam se bachaa. Apne fazl se mujhe ghair ka mohtaj mat kar.',
+   tr:"Allahumma akfini bihalalika 'an haramika wa aghnini bifadlika 'amman siwak",
+   en:'O Allah, suffice me with what is lawful against what is unlawful, and enrich me by Your grace so I need none but You.',src:'Tirmidhi'},
 
-            /* ─── HAJJ & UMRAH ─── */
-            {
-                cat: 'Hajj & Umrah 🕋', icon: '🕋', title: 'Talbiyah', titleUr: 'تلبیہ',
-                ar: 'لَبَّيْكَ اللَّهُمَّ لَبَّيْكَ، لَبَّيْكَ لَا شَرِيكَ لَكَ لَبَّيْكَ',
-                ur: 'میں حاضر ہوں اے اللہ! میں حاضر ہوں، میں حاضر ہوں، تیرا کوئی شریک نہیں، میں حاضر ہوں',
-                hl: 'Main hazir hoon Aye Allah! Hazir hoon. Tera koi saajhi nahi. Main hazir hoon.',
-                tr: "Labbayk Allahumma labbayk, labbayk la sharika laka labbayk",
-                en: 'Here I am, O Allah, here I am. Here I am, You have no partner, here I am.', src: 'Bukhari'
-            },
+  {cat:'Rizq 💰',icon:'🌾',title:'Dua for Barakah in Wealth',titleUr:'مال میں برکت کی دعا',
+   ar:'اللَّهُمَّ بَارِكْ لَنَا فِيمَا رَزَقْتَنَا وَقِنَا عَذَابَ النَّارِ',
+   ur:'اے اللہ! جو تو نے ہمیں رزق دیا اس میں برکت عطا فرما اور ہمیں جہنم کے عذاب سے بچا',
+   hl:'Aye Allah! Jo tu ne rozi di us mein barkat de aur humen jahannam ke azaab se bacha.',
+   tr:'Allahumma barik lana fima razaqtana waqina adhaban-nar',
+   en:'O Allah, bless for us what You have provided for us, and protect us from the torment of the Fire.',src:'Various'},
 
-            {
-                cat: 'Hajj & Umrah 🕋', icon: '🕌', title: 'Entering Masjid', titleUr: 'مسجد میں داخلے کی دعا',
-                ar: 'اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ',
-                ur: 'اے اللہ! میرے لیے اپنی رحمت کے دروازے کھول دے',
-                hl: 'Aye Allah! Mere liye apni rehmat ke darwaze khol de.',
-                tr: "Allahumma iftah li abwaba rahmatik",
-                en: 'O Allah, open for me the gates of Your mercy.', src: 'Muslim'
-            },
+  /* ─── HAJJ & UMRAH ─── */
+  {cat:'Hajj & Umrah 🕋',icon:'🕋',title:'Talbiyah',titleUr:'تلبیہ',
+   ar:'لَبَّيْكَ اللَّهُمَّ لَبَّيْكَ، لَبَّيْكَ لَا شَرِيكَ لَكَ لَبَّيْكَ',
+   ur:'میں حاضر ہوں اے اللہ! میں حاضر ہوں، میں حاضر ہوں، تیرا کوئی شریک نہیں، میں حاضر ہوں',
+   hl:'Main hazir hoon Aye Allah! Hazir hoon. Tera koi saajhi nahi. Main hazir hoon.',
+   tr:"Labbayk Allahumma labbayk, labbayk la sharika laka labbayk",
+   en:'Here I am, O Allah, here I am. Here I am, You have no partner, here I am.',src:'Bukhari'},
 
-            {
-                cat: 'Hajj & Umrah 🕋', icon: '🚪', title: 'Leaving Masjid', titleUr: 'مسجد سے نکلنے کی دعا',
-                ar: 'اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ',
-                ur: 'اے اللہ! میں تجھ سے تیرے فضل کا سوال کرتا ہوں',
-                hl: 'Aye Allah! Main tujh se tere fazl ka sawal karta hoon.',
-                tr: "Allahumma inni as'aluka min fadlik",
-                en: 'O Allah, I ask You from Your bounty.', src: 'Muslim'
-            },
+  {cat:'Hajj & Umrah 🕋',icon:'🕌',title:'Entering Masjid',titleUr:'مسجد میں داخلے کی دعا',
+   ar:'اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ',
+   ur:'اے اللہ! میرے لیے اپنی رحمت کے دروازے کھول دے',
+   hl:'Aye Allah! Mere liye apni rehmat ke darwaze khol de.',
+   tr:"Allahumma iftah li abwaba rahmatik",
+   en:'O Allah, open for me the gates of Your mercy.',src:'Muslim'},
 
-            /* ─── GRATITUDE ─── */
-            {
-                cat: 'Gratitude 🙏', icon: '🙏', title: 'Dua of Gratitude', titleUr: 'شکر کی دعا',
-                ar: 'اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ',
-                ur: 'اے اللہ! اپنے ذکر، شکر اور بہترین عبادت پر میری مدد فرما',
-                hl: 'Aye Allah! Teri yaad karne mein, shukar ada karne mein aur achi ibadat karne mein meri madad kar.',
-                tr: "Allahumma a'inni 'ala dhikrika wa shukrika wa husni 'ibadatik",
-                en: 'O Allah, help me to remember You, to be grateful to You, and to worship You in the best manner.', src: 'Abu Dawud'
-            },
+  {cat:'Hajj & Umrah 🕋',icon:'🚪',title:'Leaving Masjid',titleUr:'مسجد سے نکلنے کی دعا',
+   ar:'اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ',
+   ur:'اے اللہ! میں تجھ سے تیرے فضل کا سوال کرتا ہوں',
+   hl:'Aye Allah! Main tujh se tere fazl ka sawal karta hoon.',
+   tr:"Allahumma inni as'aluka min fadlik",
+   en:'O Allah, I ask You from Your bounty.',src:'Muslim'},
 
-            {
-                cat: 'Gratitude 🙏', icon: '✨', title: 'Dua When Seeing Something Beautiful', titleUr: 'خوبصورتی دیکھ کر',
-                ar: 'مَا شَاءَ اللَّهُ لَا قُوَّةَ إِلَّا بِاللَّهِ',
-                ur: 'جو اللہ نے چاہا، اللہ کی مدد کے بغیر کوئی طاقت نہیں',
-                hl: 'MashaAllah — Jo Allah ne chaha. Allah ki madad ke bina koi taaqat nahi. Jab khubsoorat cheez dekho yeh paro.',
-                tr: "Masha'Allah la quwwata illa billah",
-                en: 'Whatever Allah wills; there is no power except with Allah.', src: 'Quran 18:39'
-            },
-        ];
+  /* ─── GRATITUDE ─── */
+  {cat:'Gratitude 🙏',icon:'🙏',title:'Dua of Gratitude',titleUr:'شکر کی دعا',
+   ar:'اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ',
+   ur:'اے اللہ! اپنے ذکر، شکر اور بہترین عبادت پر میری مدد فرما',
+   hl:'Aye Allah! Teri yaad karne mein, shukar ada karne mein aur achi ibadat karne mein meri madad kar.',
+   tr:"Allahumma a'inni 'ala dhikrika wa shukrika wa husni 'ibadatik",
+   en:'O Allah, help me to remember You, to be grateful to You, and to worship You in the best manner.',src:'Abu Dawud'},
 
-        const ALL_CATS = ['All', ...new Set(DUAS.map(d => d.cat))];
-        let activeCat = 'All';
-        let searchQ = '';
-        let favs = JSON.parse(localStorage.getItem('az_favDuas') || '[]');
+  {cat:'Gratitude 🙏',icon:'✨',title:'Dua When Seeing Something Beautiful',titleUr:'خوبصورتی دیکھ کر',
+   ar:'مَا شَاءَ اللَّهُ لَا قُوَّةَ إِلَّا بِاللَّهِ',
+   ur:'جو اللہ نے چاہا، اللہ کی مدد کے بغیر کوئی طاقت نہیں',
+   hl:'MashaAllah — Jo Allah ne chaha. Allah ki madad ke bina koi taaqat nahi. Jab khubsoorat cheez dekho yeh paro.',
+   tr:"Masha'Allah la quwwata illa billah",
+   en:'Whatever Allah wills; there is no power except with Allah.',src:'Quran 18:39'},
+];
 
-        document.addEventListener('DOMContentLoaded', () => {
-            // Build tabs
-            const tabsEl = q('#catTabs');
-            ALL_CATS.forEach(cat => {
-                const t = document.createElement('button');
-                t.className = `cat-tab ${cat === activeCat ? 'on' : ''}`;
-                t.textContent = cat;
-                t.addEventListener('click', () => {
-                    activeCat = cat; qa('.cat-tab').forEach(x => x.classList.remove('on')); t.classList.add('on');
-                    renderDuas();
-                });
-                tabsEl.appendChild(t);
-            });
+const ALL_CATS=['All',...new Set(DUAS.map(d=>d.cat))];
+let activeCat='All';
+let searchQ='';
+let favs=JSON.parse(localStorage.getItem('az_favDuas')||'[]');
 
-            // Search
-            q('#duaSearch').addEventListener('input', function () {
-                searchQ = this.value.toLowerCase().trim(); renderDuas();
-            });
+document.addEventListener('DOMContentLoaded',()=>{
+  // Build tabs
+  const tabsEl=q('#catTabs');
+  ALL_CATS.forEach(cat=>{
+    const t=document.createElement('button');
+    t.className=`cat-tab ${cat===activeCat?'on':''}`;
+    t.textContent=cat;
+    t.addEventListener('click',()=>{
+      activeCat=cat; qa('.cat-tab').forEach(x=>x.classList.remove('on')); t.classList.add('on');
+      renderDuas();
+    });
+    tabsEl.appendChild(t);
+  });
 
-            renderDuas();
-        });
+  // Search
+  q('#duaSearch').addEventListener('input',function(){
+    searchQ=this.value.toLowerCase().trim(); renderDuas();
+  });
 
-        function getFiltered() {
-            let list = DUAS;
-            if (activeCat !== 'All') list = list.filter(d => d.cat === activeCat);
-            if (searchQ) list = list.filter(d =>
-                d.title.toLowerCase().includes(searchQ) ||
-                d.titleUr.includes(searchQ) ||
-                d.ar.includes(searchQ) ||
-                d.en.toLowerCase().includes(searchQ) ||
-                d.hl.toLowerCase().includes(searchQ) ||
-                d.tr.toLowerCase().includes(searchQ)
-            );
-            return list;
-        }
+  renderDuas();
+});
 
-        function renderDuas() {
-            const list = q('#duaList'); list.innerHTML = '';
-            const filtered = getFiltered();
-            q('#duaCount').textContent = `${filtered.length} dua${filtered.length !== 1 ? 'ain' : ''} mil${filtered.length !== 1 ? 'i' : 'i'}`;
+function getFiltered(){
+  let list=DUAS;
+  if(activeCat!=='All') list=list.filter(d=>d.cat===activeCat);
+  if(searchQ) list=list.filter(d=>
+    d.title.toLowerCase().includes(searchQ)||
+    d.titleUr.includes(searchQ)||
+    d.ar.includes(searchQ)||
+    d.en.toLowerCase().includes(searchQ)||
+    d.hl.toLowerCase().includes(searchQ)||
+    d.tr.toLowerCase().includes(searchQ)
+  );
+  return list;
+}
 
-            if (filtered.length === 0) {
-                list.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:30px;font-size:13px">😔 No duas found.Try a different search term.</p>';
-                return;
-            }
+function renderDuas(){
+  const list=q('#duaList'); list.innerHTML='';
+  const filtered=getFiltered();
+  q('#duaCount').textContent=`${filtered.length} dua${filtered.length!==1?'ain':''} mil${filtered.length!==1?'i':'i'}`;
 
-            filtered.forEach(dua => {
-                const isFav = favs.includes(dua.title);
-                const card = document.createElement('div'); card.className = 'dua-card';
-                card.innerHTML = `
+  if(filtered.length===0){
+    list.innerHTML='<p style="text-align:center;color:var(--text-muted);padding:30px;font-size:13px">😔 Koi dua nahi mili. Dusra lafz try karo.</p>';
+    return;
+  }
+
+  filtered.forEach(dua=>{
+    const isFav=favs.includes(dua.title);
+    const card=document.createElement('div'); card.className='dua-card';
+    card.innerHTML=`
       <div class="dua-top">
         <span class="dua-icon">${dua.icon}</span>
         <div class="dua-texts">
@@ -857,57 +549,53 @@
         <div class="dua-inner">
           <div class="dua-arabic">${dua.ar}</div>
 
-          <div style="font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px">اردو ترجمہ</div>
+          <span class="dua-lbl ur-lbl">🇵🇰 اردو ترجمہ</span>
           <div class="dua-urdu">${dua.ur}</div>
 
-          <div style="font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px">Hinglish Matlab</div>
+          <span class="dua-lbl hl-lbl">💬 Hinglish Matlab</span>
           <div class="dua-hinglish">${dua.hl}</div>
 
-          <div style="font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px">Transliteration</div>
+          <span class="dua-lbl tr-lbl">🔤 Transliteration</span>
           <div class="dua-tr">${dua.tr}</div>
-
-          <div style="font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px">English</div>
-          <div class="dua-en">"${dua.en}"</div>
 
           <div class="dua-source">📚 Source: ${dua.src}</div>
           <div class="dua-actions">
-            <button class="btn btn-ghost btn-sm fav-btn ${isFav ? 'active' : ''}" data-t="${dua.title}">${isFav ? '❤️ Saved' : '🤍 Save'}</button>
+            <button class="btn btn-ghost btn-sm fav-btn ${isFav?'active':''}" data-t="${dua.title}">${isFav?'❤️ Saved':'🤍 Save'}</button>
             <button class="btn btn-ghost btn-sm copy-dua">📋 Copy</button>
             <button class="btn btn-ghost btn-sm share-dua">🔗 Share</button>
           </div>
         </div>
       </div>`;
 
-                card.querySelector('.dua-top').addEventListener('click', () => {
-                    card.classList.toggle('open');
-                    card.querySelector('.dua-chevron').textContent = card.classList.contains('open') ? '✕' : '＋';
-                });
+    card.querySelector('.dua-top').addEventListener('click',()=>{
+      card.classList.toggle('open');
+      card.querySelector('.dua-chevron').textContent=card.classList.contains('open')?'✕':'＋';
+    });
 
-                card.querySelector('.fav-btn').addEventListener('click', e => {
-                    e.stopPropagation(); const t = dua.title;
-                    if (favs.includes(t)) { favs = favs.filter(x => x !== t); e.target.textContent = '🤍 Save'; e.target.classList.remove('active') }
-                    else { favs.push(t); e.target.textContent = '❤️ Saved'; e.target.classList.add('active') }
-                    localStorage.setItem('az_favDuas', JSON.stringify(favs));
-                    toast(favs.includes(t) ? '❤️ Saved!' : '🤍 Removed from saved');
-                });
+    card.querySelector('.fav-btn').addEventListener('click',e=>{
+      e.stopPropagation(); const t=dua.title;
+      if(favs.includes(t)){favs=favs.filter(x=>x!==t);e.target.textContent='🤍 Save';e.target.classList.remove('active')}
+      else{favs.push(t);e.target.textContent='❤️ Saved';e.target.classList.add('active')}
+      localStorage.setItem('az_favDuas',JSON.stringify(favs));
+      toast(favs.includes(t)?'❤️ Saved!':'🤍 Removed from saved');
+    });
 
-                card.querySelector('.copy-dua').addEventListener('click', e => {
-                    e.stopPropagation();
-                    const txt = `${dua.ar}\n\nاردو: ${dua.ur}\n\nHinglish: ${dua.hl}\n\nEnglish: "${dua.en}"\n— ${dua.src} | Azis Zikr`;
-                    navigator.clipboard && navigator.clipboard.writeText(txt).then(() => toast('📋 Dua copy ho gayi!')).catch(() => toast('Copy Failed'));
-                });
+    card.querySelector('.copy-dua').addEventListener('click',e=>{
+      e.stopPropagation();
+      const txt=`${dua.ar}\n\nاردو: ${dua.ur}\n\nHinglish: ${dua.hl}\n\nEnglish: "${dua.en}"\n— ${dua.src} | Azis Zikr`;
+      navigator.clipboard&&navigator.clipboard.writeText(txt).then(()=>toast('📋 Dua copy ho gayi!')).catch(()=>toast('Copy nahi hui'));
+    });
 
-                card.querySelector('.share-dua').addEventListener('click', e => {
-                    e.stopPropagation();
-                    const txt = `${dua.ar}\n\n${dua.ur}\n\n"${dua.en}"\n— ${dua.src} | Azis Zikr App`;
-                    if (navigator.share) navigator.share({ title: 'Azis Zikr — ' + dua.title, text: txt }).catch(() => { });
-                    else navigator.clipboard && navigator.clipboard.writeText(txt).then(() => toast('📋 Copied'));
-                });
+    card.querySelector('.share-dua').addEventListener('click',e=>{
+      e.stopPropagation();
+      const txt=`${dua.ar}\n\n${dua.ur}\n\n"${dua.en}"\n— ${dua.src} | Azis Zikr App`;
+      if(navigator.share)navigator.share({title:'Azis Zikr — '+dua.title,text:txt}).catch(()=>{});
+      else navigator.clipboard&&navigator.clipboard.writeText(txt).then(()=>toast('📋 Share ke liye copy hua!'));
+    });
 
-                list.appendChild(card);
-            });
-        }
-    </script>
+    list.appendChild(card);
+  });
+}
+</script>
 </body>
-
 </html>

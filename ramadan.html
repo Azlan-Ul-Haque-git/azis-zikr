@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><script>if("serviceWorker"in navigator){navigator.serviceWorker.getRegistrations().then(r=>r.forEach(x=>x.unregister()));if(window.caches)caches.keys().then(k=>k.forEach(x=>caches.delete(x)));}</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
+<title>Azis Zikr — Ramadan</title>
+<link rel="stylesheet" href="css/style.css?v=5">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#c9a84c">
+<style>
+.ram-hero{text-align:center;padding:50px 20px 24px}
+.ram-hero h1{font-family:'Cinzel Decorative',serif;font-size:clamp(20px,5vw,26px);background:linear-gradient(135deg,#f0d488,#00e8a2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+/* COUNTDOWN */
+.cd-card{background:linear-gradient(135deg,rgba(201,168,76,.13),rgba(0,232,162,.06));border:1px solid var(--gold);border-radius:var(--radius-lg);padding:26px 16px;text-align:center;margin-bottom:12px;position:relative;overflow:hidden}
+.cd-card::before{content:'🌙';position:absolute;font-size:90px;opacity:.06;top:-10px;right:-10px;line-height:1}
+.cd-label{font-family:'Cinzel',serif;font-size:11px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+.cd-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.cd-block{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:56px}
+.cd-num{font-family:'Cinzel',serif;font-size:clamp(26px,7vw,42px);font-weight:700;color:var(--gold-lt);text-shadow:0 0 18px var(--gold-glow);line-height:1}
+.cd-lbl{font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px}
+.cd-sep{font-size:24px;color:var(--gold);opacity:.4;padding-bottom:14px}
+.cd-sub{font-size:11px;color:var(--text-muted);margin-top:10px}
+/* SEHRI IFTAR */
+.si-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.si-card{border-radius:var(--radius-lg);padding:18px 12px;text-align:center;border:1px solid var(--border)}
+.si-card.sehri{background:linear-gradient(135deg,rgba(80,120,255,.1),rgba(40,60,180,.05));border-color:rgba(100,140,255,.3)}
+.si-card.iftar{background:linear-gradient(135deg,rgba(255,140,40,.1),rgba(200,90,10,.05));border-color:rgba(255,140,60,.3)}
+.si-icon{font-size:26px;margin-bottom:5px}
+.si-lbl{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px}
+.si-time{font-family:'Cinzel',serif;font-size:20px;color:var(--gold-lt);font-weight:700}
+.si-cd{font-size:11px;color:var(--teal);margin-top:4px;min-height:16px}
+/* 30 DAY TRACKER */
+.tracker{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;margin-bottom:12px}
+.tracker h3{font-family:'Cinzel',serif;font-size:12px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;text-align:center}
+.days-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
+@media(max-width:360px){.days-grid{grid-template-columns:repeat(5,1fr)}}
+.day-cell{aspect-ratio:1;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:9px;color:var(--text-dim);cursor:pointer;transition:all .2s;gap:1px;user-select:none}
+.day-cell .d-num{font-family:'Cinzel',serif;font-size:11px;font-weight:700;line-height:1}
+.day-cell .d-ico{font-size:11px;line-height:1}
+.day-cell.roza{background:var(--gold-glass);border-color:var(--gold);color:var(--gold-lt);box-shadow:0 0 8px var(--gold-glow)}
+.day-cell.today-cell{border-color:var(--teal);box-shadow:0 0 8px var(--teal-glow)}
+.day-cell.future{opacity:.4;cursor:default}
+.tracker-stats{display:flex;gap:10px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.t-stat{text-align:center;background:var(--surface2);border-radius:var(--radius);padding:8px 16px;border:1px solid var(--border2)}
+.t-stat .tv{font-family:'Cinzel',serif;font-size:20px;color:var(--gold);font-weight:700}
+.t-stat .tl{font-size:10px;color:var(--text-muted);margin-top:2px}
+/* TARAWIH */
+.tarawih{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;text-align:center;margin-bottom:12px}
+.tarawih h3{font-family:'Cinzel',serif;font-size:12px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px}
+.tw-count{font-family:'Cinzel',serif;font-size:52px;font-weight:700;color:var(--teal);text-shadow:0 0 20px var(--teal-glow);line-height:1;margin-bottom:6px}
+.tw-label{font-size:12px;color:var(--text-muted);margin-bottom:14px}
+.tw-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+/* DUAS */
+.ram-duas{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;margin-bottom:12px}
+.ram-duas h3{font-family:'Cinzel',serif;font-size:12px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;text-align:center}
+.rdua-card{background:rgba(255,255,255,.03);border:1px solid var(--border2);border-radius:var(--radius);padding:14px;margin-bottom:10px;cursor:pointer;transition:border-color .2s}
+.rdua-card:hover{border-color:rgba(201,168,76,.4)}
+.rdua-ar{font-family:'Amiri',serif;font-size:clamp(16px,4vw,22px);color:var(--gold-lt);direction:rtl;text-align:right;line-height:2.1;margin-bottom:8px;text-shadow:0 0 10px var(--gold-glow)}
+.rdua-ur{font-family:'Noto Nastaliq Urdu',serif;font-size:14px;color:#8dd8a0;direction:rtl;text-align:right;line-height:2;margin-bottom:6px}
+.rdua-hl{font-size:12px;color:#7ec8e3;line-height:1.7;font-style:italic}
+.rdua-src{font-size:10px;color:var(--text-dim);font-family:'Cinzel',serif;margin-top:6px;letter-spacing:.5px}
+</style>
+</head>
+<body>
+<canvas id="particles"></canvas>
+<video id="bgVideo" autoplay muted loop playsinline onerror="this.style.display='none'"><source src="assets/video/background.mp4" type="video/mp4"></video>
+<div class="page-overlay"></div>
+<header class="header" id="siteHeader">
+  <div class="header-inner">
+    <a href="index.html" class="logo"><img src="assets/logo.svg" alt=""><div class="logo-text"><span class="brand">Azis Zikr</span><span class="tagline">Digital Tasbih</span></div></a>
+    <nav class="nav" id="navMenu">
+      <a href="index.html">🏠 Zikr</a><a href="quran.html">📖 Quran</a><a href="prayer.html">🕌 Prayer</a>
+      <a href="stats.html">📊 Stats</a><a href="duas.html">🤲 Duas</a><a href="asmaul.html">✨ 99 Names</a><a href="ramadan.html">🌙 Ramadan</a><a href="calendar.html">📅 Calendar</a><a href="reminders.html">🔔 Reminders</a>
+    </nav>
+    <div class="hdr-right"><button class="icon-btn" id="themeBtn">🌙</button><button class="hamburger" id="ham"><span></span><span></span><span></span></button></div>
+  </div>
+</header>
+
+<div class="ram-hero">
+  <h1>🌙 Ramadan Mubarak</h1>
+  <p style="font-family:'Amiri',serif;font-size:18px;color:var(--gold-lt);margin:8px 0 4px">شَهْرُ رَمَضَانَ الَّذِي أُنزِلَ فِيهِ الْقُرْآنُ</p>
+  <p style="font-size:12px;color:var(--text-muted)">Ramadan — Woh mahina jis mein Quran utara gaya • Al-Baqarah 2:185</p>
+</div>
+
+<div class="page-wrap" style="padding-top:0">
+
+  <!-- RAMADAN COUNTDOWN -->
+  <div class="cd-card">
+    <div class="cd-label" id="cdLabel">Next Ramadan mein</div>
+    <div class="cd-row" id="cdRow">
+      <div class="cd-block"><div class="cd-num" id="cdD">--</div><div class="cd-lbl">Din</div></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-block"><div class="cd-num" id="cdH">--</div><div class="cd-lbl">Ghante</div></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-block"><div class="cd-num" id="cdM">--</div><div class="cd-lbl">Minute</div></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-block"><div class="cd-num" id="cdS">--</div><div class="cd-lbl">Second</div></div>
+    </div>
+    <div class="cd-sub" id="cdSub">Calculating…</div>
+  </div>
+
+  <!-- SEHRI & IFTAR — Jabalpur times -->
+  <div class="si-grid">
+    <div class="si-card sehri">
+      <div class="si-icon">🌃</div>
+      <div class="si-lbl">Sehri</div>
+      <div class="si-time" id="sehriTime">--:--</div>
+      <div class="si-cd" id="sehriCd"></div>
+    </div>
+    <div class="si-card iftar">
+      <div class="si-icon">🌅</div>
+      <div class="si-lbl">Iftar</div>
+      <div class="si-time" id="iftarTime">--:--</div>
+      <div class="si-cd" id="iftarCd"></div>
+    </div>
+  </div>
+  <p style="font-size:10px;color:var(--text-dim);text-align:center;margin:-6px 0 12px">📍 Jabalpur, Madhya Pradesh</p>
+
+  <!-- 30 DAY TRACKER -->
+  <div class="tracker">
+    <h3>📿 30 Roza Tracker</h3>
+    <div class="days-grid" id="daysGrid"></div>
+    <div class="tracker-stats">
+      <div class="t-stat"><div class="tv" id="rozaKept">0</div><div class="tl">Roza Rakhe</div></div>
+      <div class="t-stat"><div class="tv" id="rozaPct">0%</div><div class="tl">Completion</div></div>
+      <div class="t-stat"><div class="tv" id="rozaLeft">30</div><div class="tl">Baaki</div></div>
+    </div>
+  </div>
+
+  <!-- TARAWIH COUNTER -->
+  <div class="tarawih">
+    <h3>🕌 Tarawih Counter</h3>
+    <div class="tw-count" id="twCount">0</div>
+    <div class="tw-label">Rakat aaj ki raat</div>
+    <div class="tw-btns">
+      <button class="btn btn-ghost btn-sm" id="twMinus">−2</button>
+      <button class="btn btn-gold" id="twPlus" style="min-width:80px">+2 Rakat</button>
+      <button class="btn btn-ghost btn-sm" id="twReset">Reset</button>
+    </div>
+    <p style="font-size:11px;color:var(--text-muted);margin-top:10px">Tarawih: 8 ya 20 rakat — Sunnah hai</p>
+  </div>
+
+  <!-- RAMADAN DUAS -->
+  <div class="ram-duas">
+    <h3>🤲 Khaas Ramadan Duain</h3>
+
+    <div class="rdua-card">
+      <div class="rdua-ar">اللَّهُمَّ إِنَّكَ عَفُوٌّ تُحِبُّ الْعَفْوَ فَاعْفُ عَنِّي</div>
+      <div class="rdua-ur">اے اللہ! بے شک تو معاف کرنے والا ہے — معافی کو پسند کرتا ہے — مجھے معاف فرما دے</div>
+      <div class="rdua-hl">Aye Allah! Tu maaf karne wala hai — maafi pasand karta hai — mujhe maaf farma de</div>
+      <div class="rdua-src">📚 Laylatul Qadr ki dua — Tirmidhi</div>
+    </div>
+
+    <div class="rdua-card">
+      <div class="rdua-ar">اللَّهُمَّ إِنِّي أَسْأَلُكَ الْجَنَّةَ وَأَعُوذُ بِكَ مِنَ النَّارِ</div>
+      <div class="rdua-ur">اے اللہ! میں تجھ سے جنت مانگتا ہوں اور جہنم سے تیری پناہ مانگتا ہوں</div>
+      <div class="rdua-hl">Aye Allah! Jannat maangta hoon aur jahannam se teri panah maangta hoon</div>
+      <div class="rdua-src">📚 Abu Dawud</div>
+    </div>
+
+    <div class="rdua-card">
+      <div class="rdua-ar">رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ</div>
+      <div class="rdua-ur">اے ہمارے رب! ہمیں دنیا میں بھی بھلائی دے اور آخرت میں بھی اور ہمیں آگ کے عذاب سے بچا</div>
+      <div class="rdua-hl">Duniya mein bhi acha, aakhirat mein bhi acha — aur jahannam se bacha le</div>
+      <div class="rdua-src">📚 Quran 2:201</div>
+    </div>
+
+    <div class="rdua-card">
+      <div class="rdua-ar">اللَّهُمَّ بَلِّغْنَا رَمَضَانَ وَبَارِكْ لَنَا فِيهِ</div>
+      <div class="rdua-ur">اے اللہ! ہمیں رمضان تک پہنچا اور اس میں ہمارے لیے برکت رکھ</div>
+      <div class="rdua-hl">Aye Allah! Hume Ramadan tak pahoncha aur isme hum par barkat rakh</div>
+      <div class="rdua-src">📚 Various</div>
+    </div>
+
+    <div class="rdua-card">
+      <div class="rdua-ar">ذَهَبَ الظَّمَأُ وَابْتَلَّتِ الْعُرُوقُ وَثَبَتَ الْأَجْرُ إِنْ شَاءَ اللَّهُ</div>
+      <div class="rdua-ur">پیاس بجھ گئی اور رگیں تر ہو گئیں اور اجر ثابت ہو گیا ان شاء اللہ</div>
+      <div class="rdua-hl">Piaas bujh gayi, ragein tar ho gayin aur ajr thabit ho gaya — InshAllah (Iftar ke waqt paro)</div>
+      <div class="rdua-src">📚 Abu Dawud — Iftar ki dua</div>
+    </div>
+  </div>
+
+</div>
+
+<div id="netStatus"></div>
+<footer class="footer"><div class="footer-ticker"><div class="footer-track">
+  <span>🌙 <em>مَن صَامَ رَمَضَانَ إِيمَانًا</em> — Jo Ramadan mein iman se roza rakhe</span>
+  <span>📿 Azis Zikr — Ramadan Mubarak ho!</span>
+  <span>🌙 <em>مَن صَامَ رَمَضَانَ إِيمَانًا</em> — Jo Ramadan mein iman se roza rakhe</span>
+  <span>📿 Azis Zikr — Ramadan Mubarak ho!</span>
+</div></div></footer>
+
+<script src="js/app.js?v=5"></script>
+<script>
+// ── JABALPUR COORDS ──
+const JBP_LAT=23.1815, JBP_LNG=79.9864;
+
+// ── RAMADAN 2025 dates (approx) — update yearly ──
+// Next Ramadan 2026: ~Feb 18, 2026
+const RAMADAN_START = new Date('2026-02-18T00:00:00');
+const RAMADAN_END   = new Date('2026-03-20T00:00:00');
+
+// ── COUNTDOWN ──
+function updateCountdown(){
+  const now=new Date();
+  let target, label;
+  if(now < RAMADAN_START){
+    target=RAMADAN_START; label='Ramadan shuru hone mein';
+  } else if(now < RAMADAN_END){
+    target=RAMADAN_END; label='🌙 Ramadan Jaari Hai — Khatam hone mein';
+    q('#cdCard')&&(q('#cdCard').style.borderColor='var(--teal)');
+  } else {
+    target=new Date(RAMADAN_START); target.setFullYear(target.getFullYear()+1);
+    label='Agle Ramadan mein';
+  }
+  q('#cdLabel').textContent=label;
+  const diff=target-now;
+  if(diff<=0){q('#cdD').textContent=q('#cdH').textContent=q('#cdM').textContent=q('#cdS').textContent='00';return}
+  const d=Math.floor(diff/86400000), h=Math.floor((diff%86400000)/3600000);
+  const m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000);
+  q('#cdD').textContent=String(d).padStart(2,'0');
+  q('#cdH').textContent=String(h).padStart(2,'0');
+  q('#cdM').textContent=String(m).padStart(2,'0');
+  q('#cdS').textContent=String(s).padStart(2,'0');
+  q('#cdSub').textContent=now<RAMADAN_END&&now>=RAMADAN_START?'Ramadan ka sawab kabul ho — ameen':'Tayyari karo — Ramadan aa raha hai!';
+}
+setInterval(updateCountdown,1000); updateCountdown();
+
+// ── SEHRI & IFTAR TIMES from AlAdhan ──
+async function loadTimes(){
+  try{
+    const d=new Date();
+    const url=`https://api.aladhan.com/v1/timings/${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()}?latitude=${JBP_LAT}&longitude=${JBP_LNG}&method=1`;
+    const r=await fetch(url); const j=await r.json(); const t=j.data.timings;
+    // Sehri = Fajr, Iftar = Maghrib
+    q('#sehriTime').textContent=t.Fajr;
+    q('#iftarTime').textContent=t.Maghrib;
+
+    function timeDiff(timeStr){
+      const now=new Date();
+      const [h,m]=timeStr.split(':').map(Number);
+      const target=new Date(now); target.setHours(h,m,0);
+      if(target<now) return null;
+      const diff=target-now;
+      const dh=Math.floor(diff/3600000), dm=Math.floor((diff%3600000)/60000);
+      return `${dh}h ${dm}m baaki`;
+    }
+    const sc=timeDiff(t.Fajr), ic=timeDiff(t.Maghrib);
+    if(sc) q('#sehriCd').textContent='⏱ '+sc; else q('#sehriCd').textContent='✅ Sehri ho gayi';
+    if(ic) q('#iftarCd').textContent='⏱ '+ic; else q('#iftarCd').textContent='✅ Iftar ho gaya';
+  }catch{q('#sehriTime').textContent='--:--'; q('#iftarTime').textContent='--:--'}
+}
+loadTimes();
+
+// ── 30 DAY TRACKER ──
+let rozaData=JSON.parse(localStorage.getItem('az_rozaTracker')||'{}');
+const RAMADAN_DAYS=30;
+
+function renderDays(){
+  const g=q('#daysGrid'); g.innerHTML='';
+  const today=new Date(); today.setHours(0,0,0,0);
+  const startDate=new Date(RAMADAN_START); startDate.setHours(0,0,0,0);
+
+  for(let i=1;i<=RAMADAN_DAYS;i++){
+    const cell=document.createElement('div');
+    const cellDate=new Date(startDate); cellDate.setDate(cellDate.getDate()+(i-1));
+    const isToday=cellDate.getTime()===today.getTime();
+    const isFuture=cellDate>today;
+    const done=rozaData[i];
+    cell.className=`day-cell${done?' roza':''}${isToday?' today-cell':''}${isFuture?' future':''}`;
+    cell.innerHTML=`<div class="d-num">${i}</div><div class="d-ico">${done?'☪️':'○'}</div>`;
+    if(!isFuture) cell.addEventListener('click',()=>{
+      rozaData[i]=!rozaData[i];
+      localStorage.setItem('az_rozaTracker',JSON.stringify(rozaData));
+      renderDays(); updateTrackerStats();
+    });
+    g.appendChild(cell);
+  }
+}
+
+function updateTrackerStats(){
+  const kept=Object.values(rozaData).filter(Boolean).length;
+  q('#rozaKept').textContent=kept;
+  q('#rozaPct').textContent=Math.round(kept/30*100)+'%';
+  q('#rozaLeft').textContent=Math.max(0,30-kept);
+}
+
+// ── TARAWIH ──
+let tw=parseInt(localStorage.getItem('az_tarawih')||'0');
+function updTw(){q('#twCount').textContent=tw;localStorage.setItem('az_tarawih',tw)}
+q('#twPlus').addEventListener('click',()=>{tw+=2;updTw();toast(`🕌 ${tw} rakat ho gayi!`)});
+q('#twMinus').addEventListener('click',()=>{if(tw>=2){tw-=2;updTw()}});
+q('#twReset').addEventListener('click',()=>{tw=0;updTw();toast('Reset ho gaya')});
+updTw();
+
+// ── COPY duas ──
+qa('.rdua-card').forEach(c=>c.addEventListener('click',()=>{
+  const ar=c.querySelector('.rdua-ar')?.textContent;
+  const hl=c.querySelector('.rdua-hl')?.textContent;
+  if(ar&&navigator.clipboard) navigator.clipboard.writeText(`${ar}\n\n${hl}`).then(()=>toast('📋 Dua copy ho gayi!'));
+}));
+
+document.addEventListener('DOMContentLoaded',()=>{renderDays();updateTrackerStats()});
+</script>
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><script>if("serviceWorker"in navigator){navigator.serviceWorker.getRegistrations().then(r=>r.forEach(x=>x.unregister()));if(window.caches)caches.keys().then(k=>k.forEach(x=>caches.delete(x)));}</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
+<title>Azis Zikr — 99 Names of Allah</title>
+<link rel="stylesheet" href="css/style.css?v=5">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#c9a84c">
+<style>
+.asma-hero{text-align:center;padding:50px 20px 26px}
+.asma-hero h1{font-family:'Cinzel',serif;font-size:clamp(22px,5vw,30px);background:linear-gradient(135deg,var(--gold-lt),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+.asma-hero .bismillah{font-family:'Amiri',serif;font-size:18px;color:var(--gold-lt);direction:rtl;margin:8px 0 4px}
+.asma-hero p{color:var(--text-muted);font-size:13px}
+.mode-tabs{display:flex;gap:8px;justify-content:center;margin-bottom:16px;flex-wrap:wrap;padding:0 16px}
+.mode-tab{padding:8px 18px;border-radius:100px;border:1px solid var(--border2);background:var(--surface);color:var(--text-muted);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;font-family:'Poppins',sans-serif}
+.mode-tab.on{background:var(--gold-glass);border-color:var(--gold);color:var(--gold-lt)}
+.asma-search{position:relative;max-width:var(--max-w);margin:0 auto 16px;padding:0 16px}
+.asma-search input{width:100%;padding:12px 18px 12px 44px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:'Poppins',sans-serif;font-size:14px;outline:none;transition:border-color .2s}
+.asma-search input:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-glass)}
+.asma-search input::placeholder{color:var(--text-muted)}
+.asma-search .s-icon{position:absolute;left:30px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none}
+.asma-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(max-width:420px){.asma-grid{grid-template-columns:1fr}}
+@media(min-width:700px){.asma-grid{grid-template-columns:repeat(3,1fr)}}
+.asma-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:16px 14px;cursor:pointer;transition:all .22s;position:relative;text-align:center}
+.asma-card:hover,.asma-card.open{border-color:var(--gold);background:var(--gold-glass);box-shadow:0 0 16px rgba(201,168,76,.12)}
+.asma-num{position:absolute;top:8px;left:10px;font-family:'Cinzel',serif;font-size:10px;color:var(--text-dim)}
+.asma-ar{font-family:'Amiri',serif;font-size:clamp(20px,5vw,26px);color:var(--gold-lt);direction:rtl;line-height:1.8;text-shadow:0 0 12px var(--gold-glow);margin-bottom:5px}
+.asma-tr{font-size:12px;color:var(--teal);font-style:italic;margin-bottom:3px}
+.asma-en{font-size:13px;font-weight:600;color:var(--text)}
+.asma-extra{display:none;margin-top:8px;border-top:1px solid var(--border2);padding-top:8px}
+.asma-card.open .asma-extra{display:block}
+.asma-ur{font-family:'Noto Nastaliq Urdu',serif;font-size:14px;color:#8dd8a0;direction:rtl;line-height:2;margin-bottom:4px}
+.asma-hl{font-size:11px;color:#7ec8e3;font-style:italic}
+/* QUIZ */
+.quiz-score{font-family:'Cinzel',serif;font-size:14px;color:var(--gold);text-align:center;margin-bottom:12px}
+.quiz-card{background:var(--surface);border:2px solid var(--gold);border-radius:var(--radius-lg);padding:28px 20px;text-align:center;margin-bottom:14px}
+.quiz-q{font-family:'Amiri',serif;font-size:clamp(26px,7vw,40px);color:var(--gold-lt);direction:rtl;text-shadow:0 0 20px var(--gold-glow);margin-bottom:6px}
+.quiz-hint{font-size:12px;color:var(--text-dim);margin-bottom:16px}
+.quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.quiz-opt{padding:12px 8px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:13px;cursor:pointer;transition:all .18s;font-family:'Poppins',sans-serif}
+.quiz-opt:hover:not(:disabled){border-color:var(--gold);color:var(--gold-lt)}
+.quiz-opt.correct{background:rgba(0,232,162,.2);border-color:var(--teal);color:var(--teal)}
+.quiz-opt.wrong{background:rgba(232,80,80,.15);border-color:#e05050;color:#e08080}
+</style>
+</head>
+<body>
+<canvas id="particles"></canvas>
+<video id="bgVideo" autoplay muted loop playsinline onerror="this.style.display='none'"><source src="assets/video/background.mp4" type="video/mp4"></video>
+<div class="page-overlay"></div>
+<header class="header" id="siteHeader">
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <img src="assets/logo.svg" alt="">
+      <div class="logo-text"><span class="brand">Azis Zikr</span><span class="tagline">Digital Tasbih</span></div>
+    </a>
+    <nav class="nav" id="navMenu">
+      <a href="index.html">🏠 Zikr</a>
+      <a href="quran.html">📖 Quran</a>
+      <a href="prayer.html">🕌 Prayer</a>
+      <a href="asmaul.html">✨ 99 Names</a>
+      <a href="ramadan.html">🌙 Ramadan</a>
+      <a href="calendar.html">📅 Calendar</a>
+      <a href="reminders.html">🔔 Reminders</a>
+      <a href="stats.html">📊 Stats</a>
+      <a href="duas.html">🤲 Duas</a>
+      <a href="about.html">💫 About</a>
+    </nav>
+    <div class="hdr-right">
+      <button class="icon-btn" id="themeBtn">🌙</button>
+      <button class="hamburger" id="ham"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<div class="asma-hero">
+  <h1>✨ Asma ul Husna</h1>
+  <div class="bismillah">وَلِلَّهِ الْأَسْمَاءُ الْحُسْنَىٰ فَادْعُوهُ بِهَا</div>
+  <p>99 Beautiful Names of Allah · Arabic · اردو · Hinglish — Tap any card to see meaning</p>
+</div>
+
+<div class="mode-tabs">
+  <button class="mode-tab on" data-mode="browse">📚 Browse All</button>
+  <button class="mode-tab" data-mode="quiz">🎯 Quiz Mode</button>
+</div>
+
+<div class="asma-search" id="searchWrap">
+  <span class="s-icon">🔍</span>
+  <input type="text" id="asmaSearch" placeholder="Search name or meaning…">
+</div>
+
+<div class="page-wrap" style="padding-top:0">
+  <div id="quizPanel" style="display:none">
+    <div class="quiz-score" id="quizScore">Score: 0 / 0</div>
+    <div class="quiz-card">
+      <div class="quiz-q" id="quizQ">بِسْمِ اللَّهِ</div>
+      <div class="quiz-hint">Kaun sa naam hai yeh?</div>
+      <div class="quiz-opts" id="quizOpts"></div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px">
+      <button class="btn btn-ghost btn-sm" id="quizSkip">Skip →</button>
+      <button class="btn btn-ghost btn-sm" id="quizRestart">↺ Restart</button>
+    </div>
+  </div>
+  <div class="asma-grid" id="asmaGrid"></div>
+</div>
+
+<div id="netStatus"></div>
+<footer class="footer">
+  <div class="footer-ticker"><div class="footer-track">
+    <span>✨ <em>وَلِلَّهِ الْأَسْمَاءُ الْحُسْنَىٰ فَادْعُوهُ بِهَا</em> — Allah ke naam se pukaro</span>
+    <span>🤍 99 Asma — Har naam ek noor, ek dua, ek yakeen</span>
+    <span>📿 Azis Zikr — Koi Ad Nahi, Sirf Ibadah</span>
+    <span>✨ <em>وَلِلَّهِ الْأَسْمَاءُ الْحُسْنَىٰ فَادْعُوهُ بِهَا</em> — Allah ke naam se pukaro</span>
+  </div></div>
+</footer>
+
+<script src="js/app.js?v=5"></script>
+<script>
+const ASMA=[
+  {n:1,ar:'اللَّهُ',tr:'Allah',en:'The One God',ur:'اللہ',hl:'Woh jo sirf ek hai'},
+  {n:2,ar:'الرَّحْمَٰنُ',tr:'Ar-Rahman',en:'The Most Gracious',ur:'بے حد مہربان',hl:'Bahut zyada rehmdil'},
+  {n:3,ar:'الرَّحِيمُ',tr:'Ar-Raheem',en:'The Most Merciful',ur:'بار بار رحم کرنے والا',hl:'Baar baar reham karne wala'},
+  {n:4,ar:'الْمَلِكُ',tr:'Al-Malik',en:'The King',ur:'بادشاہ',hl:'Tamam jahanon ka badshah'},
+  {n:5,ar:'الْقُدُّوسُ',tr:'Al-Quddus',en:'The Most Holy',ur:'پاک',hl:'Bilkul pak — koi aib nahi'},
+  {n:6,ar:'السَّلَامُ',tr:'As-Salam',en:'The Source of Peace',ur:'سلامتی دینے والا',hl:'Amaan aur sukoon dene wala'},
+  {n:7,ar:'الْمُؤْمِنُ',tr:'Al-Mumin',en:'The Guardian of Faith',ur:'امان دینے والا',hl:'Hifazat aur amaan dene wala'},
+  {n:8,ar:'الْمُهَيْمِنُ',tr:'Al-Muhaymin',en:'The Protector',ur:'نگہبان',hl:'Nigehbaan — hamesha chaukidaar'},
+  {n:9,ar:'الْعَزِيزُ',tr:'Al-Aziz',en:'The Almighty',ur:'غالب',hl:'Sab par gaalib aur taaqatwar'},
+  {n:10,ar:'الْجَبَّارُ',tr:'Al-Jabbar',en:'The Compeller',ur:'زبردست',hl:'Jo toote ko jorta hai — zabardast'},
+  {n:11,ar:'الْمُتَكَبِّرُ',tr:'Al-Mutakabbir',en:'The Supreme',ur:'بڑائی والا',hl:'Sab se bada — koi barabar nahi'},
+  {n:12,ar:'الْخَالِقُ',tr:'Al-Khaliq',en:'The Creator',ur:'پیدا کرنے والا',hl:'Sab kuch banane wala'},
+  {n:13,ar:'الْبَارِئُ',tr:'Al-Bari',en:'The Evolver',ur:'بنانے والا',hl:'Chezon ko wujood dene wala'},
+  {n:14,ar:'الْمُصَوِّرُ',tr:'Al-Musawwir',en:'The Fashioner of Forms',ur:'صورت بنانے والا',hl:'Soorat aur shakal dene wala'},
+  {n:15,ar:'الْغَفَّارُ',tr:'Al-Ghaffar',en:'The Repeatedly Forgiving',ur:'بہت بخشنے والا',hl:'Baar baar maaf karne wala'},
+  {n:16,ar:'الْقَهَّارُ',tr:'Al-Qahhar',en:'The Subduer',ur:'غالب آنے والا',hl:'Sab ko dabane wala — koi chupta nahi'},
+  {n:17,ar:'الْوَهَّابُ',tr:'Al-Wahhab',en:'The Bestower',ur:'بہت عطا کرنے والا',hl:'Bina mangay dene wala'},
+  {n:18,ar:'الرَّزَّاقُ',tr:'Ar-Razzaq',en:'The Provider',ur:'رزق دینے والا',hl:'Rozi aur rizq dene wala'},
+  {n:19,ar:'الْفَتَّاحُ',tr:'Al-Fattah',en:'The Opener',ur:'کھولنے والا',hl:'Band darwaze kholne wala'},
+  {n:20,ar:'الْعَلِيمُ',tr:'Al-Alim',en:'The All-Knowing',ur:'سب جاننے والا',hl:'Sab kuch jaanta hai'},
+  {n:21,ar:'الْقَابِضُ',tr:'Al-Qabid',en:'The Constrictor',ur:'روکنے والا',hl:'Hikmah se rokne wala'},
+  {n:22,ar:'الْبَاسِطُ',tr:'Al-Basit',en:'The Expander',ur:'پھیلانے والا',hl:'Dil aur rizq ko failaane wala'},
+  {n:23,ar:'الْخَافِضُ',tr:'Al-Khafid',en:'The Abaser',ur:'نیچا کرنے والا',hl:'Ghuroor wale ko neeche laane wala'},
+  {n:24,ar:'الرَّافِعُ',tr:'Ar-Rafi',en:'The Exalter',ur:'اونچا کرنے والا',hl:'Jo chahay uuncha utha de'},
+  {n:25,ar:'الْمُعِزُّ',tr:'Al-Muizz',en:'The Honourer',ur:'عزت دینے والا',hl:'Izzat aur maan dene wala'},
+  {n:26,ar:'الْمُذِلُّ',tr:'Al-Mudhill',en:'The Humiliator',ur:'ذلیل کرنے والا',hl:'Zalimo ko zaleel karne wala'},
+  {n:27,ar:'السَّمِيعُ',tr:'As-Sami',en:'The All-Hearing',ur:'سننے والا',hl:'Har awaaz sunta hai'},
+  {n:28,ar:'الْبَصِيرُ',tr:'Al-Basir',en:'The All-Seeing',ur:'دیکھنے والا',hl:'Andheron mein bhi dekhta hai'},
+  {n:29,ar:'الْحَكَمُ',tr:'Al-Hakam',en:'The Judge',ur:'فیصلہ کرنے والا',hl:'Aakhri faisla Allah ka hoga'},
+  {n:30,ar:'الْعَدْلُ',tr:'Al-Adl',en:'The Just',ur:'انصاف والا',hl:'Poora insaaf karne wala'},
+  {n:31,ar:'اللَّطِيفُ',tr:'Al-Latif',en:'The Subtle',ur:'باریک بین',hl:'Chhoti baaton ka khayal rakhta hai'},
+  {n:32,ar:'الْخَبِيرُ',tr:'Al-Khabir',en:'The All-Aware',ur:'باخبر',hl:'Sab khabar rakhta hai'},
+  {n:33,ar:'الْحَلِيمُ',tr:'Al-Halim',en:'The Forbearing',ur:'بردبار',hl:'Bura karo phir bhi sabr karta hai'},
+  {n:34,ar:'الْعَظِيمُ',tr:'Al-Azim',en:'The Magnificent',ur:'بہت بڑا',hl:'Sochne se bhi bada'},
+  {n:35,ar:'الْغَفُورُ',tr:'Al-Ghafur',en:'The All-Forgiving',ur:'معاف کرنے والا',hl:'Hamesha maaf karne ke liye tayyar'},
+  {n:36,ar:'الشَّكُورُ',tr:'Ash-Shakur',en:'The Appreciative',ur:'قدردان',hl:'Chhoti si bhalai par bhi shukar'},
+  {n:37,ar:'الْعَلِيُّ',tr:'Al-Ali',en:'The Most High',ur:'بلند',hl:'Sab se upar'},
+  {n:38,ar:'الْكَبِيرُ',tr:'Al-Kabir',en:'The Most Great',ur:'سب سے بڑا',hl:'Koi iske barabar nahi'},
+  {n:39,ar:'الْحَفِيظُ',tr:'Al-Hafiz',en:'The Preserver',ur:'حافظ',hl:'Sab ki hifazat karta hai'},
+  {n:40,ar:'الْمُقِيتُ',tr:'Al-Muqit',en:'The Sustainer',ur:'طاقت دینے والا',hl:'Taaqat dene wala'},
+  {n:41,ar:'الْحَسِيبُ',tr:'Al-Hasib',en:'The Reckoner',ur:'حساب کرنے والا',hl:'Ek ek kaam ka hisaab'},
+  {n:42,ar:'الْجَلِيلُ',tr:'Al-Jalil',en:'The Majestic',ur:'جلال والا',hl:'Azmat wala'},
+  {n:43,ar:'الْكَرِيمُ',tr:'Al-Karim',en:'The Generous',ur:'کریم',hl:'Dil khol ke dene wala'},
+  {n:44,ar:'الرَّقِيبُ',tr:'Ar-Raqib',en:'The Watchful',ur:'نگران',hl:'Hamesha dekh raha hai'},
+  {n:45,ar:'الْمُجِيبُ',tr:'Al-Mujib',en:'The Responsive',ur:'دعا قبول کرنے والا',hl:'Dua sunn ke qabool karta hai'},
+  {n:46,ar:'الْوَاسِعُ',tr:'Al-Wasi',en:'The Vast',ur:'وسعت والا',hl:'Rehmat sab ko gheri hui hai'},
+  {n:47,ar:'الْحَكِيمُ',tr:'Al-Hakim',en:'The Wise',ur:'حکمت والا',hl:'Har kaam mein hikmah'},
+  {n:48,ar:'الْوَدُودُ',tr:'Al-Wadud',en:'The Loving',ur:'محبت والا',hl:'Sachchi mohabbat karne wala'},
+  {n:49,ar:'الْمَجِيدُ',tr:'Al-Majid',en:'The Most Glorious',ur:'بزرگی والا',hl:'Buland shan wala'},
+  {n:50,ar:'الْبَاعِثُ',tr:'Al-Baith',en:'The Resurrector',ur:'اٹھانے والا',hl:'Qayamat pe sab ko uthane wala'},
+  {n:51,ar:'الشَّهِيدُ',tr:'Ash-Shahid',en:'The Witness',ur:'گواہ',hl:'Sab ka gawah'},
+  {n:52,ar:'الْحَقُّ',tr:'Al-Haqq',en:'The Truth',ur:'سچ',hl:'Sirf Allah haq hai'},
+  {n:53,ar:'الْوَكِيلُ',tr:'Al-Wakil',en:'The Trustee',ur:'کارساز',hl:'Sab se behtar kaam karne wala'},
+  {n:54,ar:'الْقَوِيُّ',tr:'Al-Qawi',en:'The All-Strong',ur:'قوت والا',hl:'Mazboot — kabhi nahi haarta'},
+  {n:55,ar:'الْمَتِينُ',tr:'Al-Matin',en:'The Firm',ur:'مضبوط',hl:'Pakka aur mazboot'},
+  {n:56,ar:'الْوَلِيُّ',tr:'Al-Wali',en:'The Friend',ur:'دوست',hl:'Sach mein wali aur dost'},
+  {n:57,ar:'الْحَمِيدُ',tr:'Al-Hamid',en:'The Praiseworthy',ur:'تعریف کے لائق',hl:'Tamam tarif sirf uske liye'},
+  {n:58,ar:'الْمُحْصِي',tr:'Al-Muhsi',en:'The Counter',ur:'گننے والا',hl:'Har cheez ginaane wala'},
+  {n:59,ar:'الْمُبْدِئُ',tr:'Al-Mubdi',en:'The Originator',ur:'شروع کرنے والا',hl:'Pehli baar banane wala'},
+  {n:60,ar:'الْمُعِيدُ',tr:'Al-Muid',en:'The Restorer',ur:'دوبارہ پیدا کرنے والا',hl:'Marne ke baad dobara zinda karta hai'},
+  {n:61,ar:'الْمُحْيِي',tr:'Al-Muhyi',en:'The Life-Giver',ur:'زندگی دینے والا',hl:'Zindagi dene wala'},
+  {n:62,ar:'الْمُمِيتُ',tr:'Al-Mumit',en:'The Death-Giver',ur:'موت دینے والا',hl:'Maut sirf uski marzi se'},
+  {n:63,ar:'الْحَيُّ',tr:'Al-Hayy',en:'The Ever-Living',ur:'ہمیشہ زندہ',hl:'Kabhi nahi marta'},
+  {n:64,ar:'الْقَيُّومُ',tr:'Al-Qayyum',en:'The Self-Sustaining',ur:'قائم رہنے والا',hl:'Khud qaim — sab ko qaim rakhta hai'},
+  {n:65,ar:'الْوَاجِدُ',tr:'Al-Wajid',en:'The Finder',ur:'پانے والا',hl:'Jo chahay pata hai'},
+  {n:66,ar:'الْمَاجِدُ',tr:'Al-Majid',en:'The Noble',ur:'شریف',hl:'Shareef aur izat wala'},
+  {n:67,ar:'الْوَاحِدُ',tr:'Al-Wahid',en:'The One',ur:'اکیلا',hl:'Sirf ek — koi saajhi nahi'},
+  {n:68,ar:'الْأَحَدُ',tr:'Al-Ahad',en:'The Unique',ur:'یکتا',hl:'Bilkul akela aur yaktaa'},
+  {n:69,ar:'الصَّمَدُ',tr:'As-Samad',en:'The Eternal Refuge',ur:'بے نیاز',hl:'Kisi ka mohtaaj nahi'},
+  {n:70,ar:'الْقَادِرُ',tr:'Al-Qadir',en:'The Omnipotent',ur:'قدرت والا',hl:'Har cheez par qadir'},
+  {n:71,ar:'الْمُقْتَدِرُ',tr:'Al-Muqtadir',en:'The All-Powerful',ur:'پوری قدرت والا',hl:'Poori taaqat rakhne wala'},
+  {n:72,ar:'الْمُقَدِّمُ',tr:'Al-Muqaddim',en:'The Expediter',ur:'آگے کرنے والا',hl:'Jo chahay aage barhaye'},
+  {n:73,ar:'الْمُؤَخِّرُ',tr:'Al-Muakhkhir',en:'The Delayer',ur:'پیچھے کرنے والا',hl:'Jo chahay peeche kar de'},
+  {n:74,ar:'الْأَوَّلُ',tr:'Al-Awwal',en:'The First',ur:'پہلا',hl:'Sab se pehle — koi usse pehle nahi'},
+  {n:75,ar:'الْآخِرُ',tr:'Al-Akhir',en:'The Last',ur:'آخری',hl:'Sab ke baad — hamesha rahega'},
+  {n:76,ar:'الظَّاهِرُ',tr:'Az-Zahir',en:'The Manifest',ur:'ظاہر',hl:'Nishaniyon se zahir hai'},
+  {n:77,ar:'الْبَاطِنُ',tr:'Al-Batin',en:'The Hidden',ur:'پوشیدہ',hl:'Aankhon se chhupta — dil se nahi'},
+  {n:78,ar:'الْوَالِي',tr:'Al-Wali',en:'The Governor',ur:'حاکم',hl:'Tamam kaainaat ka hakim'},
+  {n:79,ar:'الْمُتَعَالِي',tr:'Al-Mutaali',en:'The Self Exalted',ur:'بلند تر',hl:'Sab se upar aur bala'},
+  {n:80,ar:'الْبَرُّ',tr:'Al-Barr',en:'The Source of Goodness',ur:'نیکی کا سرچشمہ',hl:'Saari nekiyon ka zariya'},
+  {n:81,ar:'التَّوَّابُ',tr:'At-Tawwab',en:'The Accepter of Repentance',ur:'توبہ قبول کرنے والا',hl:'Tauba qabool karne wala'},
+  {n:82,ar:'الْمُنْتَقِمُ',tr:'Al-Muntaqim',en:'The Avenger',ur:'بدلہ لینے والا',hl:'Zalimo se badla lene wala'},
+  {n:83,ar:'الْعَفُوُّ',tr:'Al-Afuww',en:'The Pardoner',ur:'معافی دینے والا',hl:'Gunaah bilkul mita dene wala'},
+  {n:84,ar:'الرَّءُوفُ',tr:'Ar-Rauf',en:'The Compassionate',ur:'شفقت والا',hl:'Dil se shafqat karne wala'},
+  {n:85,ar:'مَالِكُ الْمُلْكِ',tr:'Malik-ul-Mulk',en:'Owner of All Sovereignty',ur:'بادشاہت کا مالک',hl:'Tamam badshahi ka asli malik'},
+  {n:86,ar:'ذُو الْجَلَالِ وَالْإِكْرَامِ',tr:'Dhul-Jalal wal-Ikram',en:'Lord of Majesty and Bounty',ur:'جلال اور اکرام والا',hl:'Azmat aur izzat dono wala'},
+  {n:87,ar:'الْمُقْسِطُ',tr:'Al-Muqsit',en:'The Equitable',ur:'انصاف کرنے والا',hl:'Haqiqi insaaf karne wala'},
+  {n:88,ar:'الْجَامِعُ',tr:'Al-Jami',en:'The Gatherer',ur:'جمع کرنے والا',hl:'Sab ko qayamat pe ikattha karta hai'},
+  {n:89,ar:'الْغَنِيُّ',tr:'Al-Ghani',en:'The Self-Sufficient',ur:'بے نیاز',hl:'Kisi ka mohtaaj nahi'},
+  {n:90,ar:'الْمُغْنِي',tr:'Al-Mughni',en:'The Enricher',ur:'غنی کرنے والا',hl:'Gareebon ko ameer karne wala'},
+  {n:91,ar:'الْمَانِعُ',tr:'Al-Mani',en:'The Preventer',ur:'روکنے والا',hl:'Burai se rokne wala'},
+  {n:92,ar:'الضَّارُّ',tr:'Ad-Darr',en:'The Distresser',ur:'نقصان دینے والا',hl:'Hikmah se naqsaan pohonchane wala'},
+  {n:93,ar:'النَّافِعُ',tr:'An-Nafi',en:'The Benefiter',ur:'فائدہ دینے والا',hl:'Faida aur bhalaai dene wala'},
+  {n:94,ar:'النُّورُ',tr:'An-Nur',en:'The Light',ur:'نور',hl:'Tamam kaainaat ka noor'},
+  {n:95,ar:'الْهَادِي',tr:'Al-Hadi',en:'The Guide',ur:'ہدایت دینے والا',hl:'Seedha raasta dikhane wala'},
+  {n:96,ar:'الْبَدِيعُ',tr:'Al-Badi',en:'The Incomparable',ur:'انوکھا خالق',hl:'Anokhe andaz se banane wala'},
+  {n:97,ar:'الْبَاقِي',tr:'Al-Baqi',en:'The Everlasting',ur:'ہمیشہ رہنے والا',hl:'Hamesha rahega'},
+  {n:98,ar:'الْوَارِثُ',tr:'Al-Warith',en:'The Ultimate Inheritor',ur:'وارث',hl:'Sab kuch aakhir mein uska'},
+  {n:99,ar:'الرَّشِيدُ',tr:'Ar-Rashid',en:'The Guide to Right Path',ur:'ہدایت والا',hl:'Seedhe raaste par chalaane wala'},
+];
+
+let mode='browse', quizScore=0, quizTotal=0, quizIdx=0, quizOrder=[];
+
+function renderBrowse(list){
+  const g=q('#asmaGrid'); g.innerHTML='';
+  list.forEach(a=>{
+    const card=document.createElement('div'); card.className='asma-card';
+    card.innerHTML=`
+      <div class="asma-num">${a.n}</div>
+      <div class="asma-ar">${a.ar}</div>
+      <div class="asma-tr">${a.tr}</div>
+      <div class="asma-en">${a.en}</div>
+      <div class="asma-extra">
+        <div class="asma-ur">${a.ur}</div>
+        <div class="asma-hl">↳ ${a.hl}</div>
+      </div>`;
+    card.addEventListener('click',()=>card.classList.toggle('open'));
+    g.appendChild(card);
+  });
+}
+
+function startQuiz(){
+  quizScore=0; quizTotal=0; quizIdx=0;
+  quizOrder=[...ASMA].sort(()=>Math.random()-.5);
+  showQuestion();
+}
+function showQuestion(){
+  if(quizIdx>=quizOrder.length){
+    toast(`🎉 Quiz khatam! Score: ${quizScore}/${quizTotal}`);
+    quizIdx=0; quizOrder=[...ASMA].sort(()=>Math.random()-.5);
+  }
+  const cur=quizOrder[quizIdx];
+  q('#quizScore').textContent=`Score: ${quizScore} / ${quizTotal}`;
+  q('#quizQ').textContent=cur.ar;
+  const wrong=ASMA.filter(a=>a.n!==cur.n).sort(()=>Math.random()-.5).slice(0,3);
+  const opts=[cur,...wrong].sort(()=>Math.random()-.5);
+  const el=q('#quizOpts'); el.innerHTML='';
+  opts.forEach(o=>{
+    const btn=document.createElement('button'); btn.className='quiz-opt'; btn.textContent=o.en;
+    btn.addEventListener('click',()=>{
+      qa('.quiz-opt').forEach(b=>b.disabled=true);
+      quizTotal++;
+      if(o.n===cur.n){btn.classList.add('correct');quizScore++;toast('✅ Sahi jawab!')}
+      else{btn.classList.add('wrong');toast(`❌ ${cur.tr} — ${cur.en}`);qa('.quiz-opt').forEach(b=>{if(b.textContent===cur.en)b.classList.add('correct')})}
+      q('#quizScore').textContent=`Score: ${quizScore} / ${quizTotal}`;
+      setTimeout(()=>{quizIdx++;showQuestion();},1400);
+    });
+    el.appendChild(btn);
+  });
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  renderBrowse(ASMA);
+  q('#asmaSearch').addEventListener('input',function(){
+    const v=this.value.toLowerCase().trim();
+    renderBrowse(v?ASMA.filter(a=>a.en.toLowerCase().includes(v)||a.tr.toLowerCase().includes(v)||a.ar.includes(v)||a.hl.toLowerCase().includes(v)||a.ur.includes(v)):ASMA);
+  });
+  qa('.mode-tab').forEach(tab=>{
+    tab.addEventListener('click',()=>{
+      qa('.mode-tab').forEach(t=>t.classList.remove('on')); tab.classList.add('on');
+      mode=tab.dataset.mode;
+      if(mode==='quiz'){q('#asmaGrid').style.display='none';q('#quizPanel').style.display='block';q('#searchWrap').style.display='none';startQuiz();}
+      else{q('#asmaGrid').style.display='';q('#quizPanel').style.display='none';q('#searchWrap').style.display='';}
+    });
+  });
+  q('#quizSkip').addEventListener('click',()=>{quizIdx++;showQuestion();});
+  q('#quizRestart').addEventListener('click',startQuiz);
+});
+</script>
+</body>
+</html>

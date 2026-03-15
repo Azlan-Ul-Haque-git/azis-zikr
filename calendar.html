@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><script>if("serviceWorker"in navigator){navigator.serviceWorker.getRegistrations().then(r=>r.forEach(x=>x.unregister()));if(window.caches)caches.keys().then(k=>k.forEach(x=>caches.delete(x)));}</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
+<title>Azis Zikr — Islamic Calendar</title>
+<link rel="stylesheet" href="css/style.css?v=5">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#c9a84c">
+<style>
+.cal-hero{text-align:center;padding:50px 20px 24px}
+.cal-hero h1{font-family:'Cinzel Decorative',serif;font-size:clamp(18px,5vw,26px);background:linear-gradient(135deg,#f0d488,#00e8a2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+.cal-hero .hijri-big{font-family:'Amiri',serif;font-size:clamp(22px,6vw,34px);color:var(--gold-lt);direction:rtl;margin:12px 0 4px;text-shadow:0 0 20px var(--gold-glow)}
+.cal-hero .greg-lbl{color:var(--text-muted);font-size:13px}
+
+/* HIJRI MONTH CARD */
+.month-card{background:linear-gradient(135deg,rgba(201,168,76,.1),rgba(0,232,162,.05));border:1px solid var(--gold);border-radius:var(--radius-lg);padding:20px;margin-bottom:16px;overflow:hidden;position:relative}
+.month-card::before{content:'🌙';position:absolute;font-size:100px;opacity:.05;bottom:-20px;right:-10px;line-height:1}
+.month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.month-nav button{background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:50%;width:36px;height:36px;font-size:16px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.month-nav button:hover{border-color:var(--gold);color:var(--gold)}
+.month-title{text-align:center}
+.month-title .hm-name{font-family:'Amiri',serif;font-size:22px;color:var(--gold-lt);direction:rtl;display:block}
+.month-title .hm-en{font-size:12px;color:var(--text-muted);font-family:'Cinzel',serif;letter-spacing:1px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-day-hdr{text-align:center;font-size:10px;color:var(--text-muted);font-weight:600;padding:4px 0;font-family:'Cinzel',serif;letter-spacing:.5px}
+.cal-day{text-align:center;padding:7px 2px;border-radius:8px;font-size:12px;color:var(--text-muted);cursor:default;transition:all .2s;position:relative;min-height:34px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+.cal-day.today{background:var(--gold-glass);border:1px solid var(--gold);color:var(--gold-lt);font-weight:700}
+.cal-day.has-event{color:var(--teal)}
+.cal-day.has-event::after{content:'';width:4px;height:4px;background:var(--teal);border-radius:50%;position:absolute;bottom:3px}
+.cal-day.friday{color:var(--gold)}
+.cal-day.empty{opacity:0}
+.cal-day .greg{font-size:8px;color:var(--text-muted2);opacity:.5}
+
+/* UPCOMING EVENTS */
+.events-list{display:flex;flex-direction:column;gap:10px}
+.event-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:14px;transition:border-color .2s;position:relative;overflow:hidden}
+.event-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--gold)}
+.event-card.teal::before{background:var(--teal)}
+.event-card.red::before{background:#e8655a}
+.event-card.green::before{background:#5ae895}
+.event-icon{font-size:28px;flex-shrink:0;line-height:1}
+.event-info{flex:1;min-width:0}
+.event-name{font-family:'Cinzel',serif;font-size:13px;color:var(--gold-lt);font-weight:600;margin-bottom:2px}
+.event-name-ur{font-family:'Noto Nastaliq Urdu',serif;font-size:13px;color:var(--text-muted);direction:rtl;margin-bottom:3px}
+.event-date{font-size:11px;color:var(--text-muted)}
+.event-cd{text-align:right;flex-shrink:0}
+.event-cd .days{font-family:'Cinzel',serif;font-size:20px;color:var(--gold-lt);line-height:1;font-weight:700}
+.event-cd .days.past{color:var(--teal);font-size:13px}
+.event-cd .dlbl{font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px}
+
+/* MOON PHASE */
+.moon-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;text-align:center;margin-bottom:16px}
+.moon-emoji{font-size:56px;line-height:1;margin-bottom:10px;filter:drop-shadow(0 0 20px rgba(201,168,76,.4))}
+.moon-name{font-family:'Cinzel',serif;font-size:14px;color:var(--gold-lt);margin-bottom:4px}
+.moon-sub{font-size:12px;color:var(--text-muted)}
+
+/* ISLAMIC YEAR INFO */
+.year-card{background:linear-gradient(135deg,rgba(0,232,162,.08),rgba(201,168,76,.05));border:1px solid var(--teal-dk,#00b380);border-radius:var(--radius-lg);padding:16px 20px;display:flex;align-items:center;gap:16px;margin-bottom:16px}
+.year-icon{font-size:32px}
+.year-info h3{font-family:'Cinzel',serif;font-size:13px;color:var(--teal);margin-bottom:3px}
+.year-info p{font-size:12px;color:var(--text-muted);line-height:1.5}
+</style>
+</head>
+<body>
+<canvas id="particles"></canvas>
+<div class="page-overlay"></div>
+
+<!-- HEADER -->
+<header class="header" id="siteHeader">
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <img src="assets/logo.svg" alt="">
+      <div class="logo-text"><span class="brand">Azis Zikr</span><span class="tagline">Islamic Calendar</span></div>
+    </a>
+    <nav class="nav" id="navMenu">
+      <a href="index.html">🏠 Zikr</a>
+      <a href="quran.html">📖 Quran</a>
+      <a href="prayer.html">🕌 Prayer</a>
+      <a href="duas.html">🤲 Duas</a>
+      <a href="asmaul.html">✨ 99 Names</a>
+      <a href="ramadan.html">🌙 Ramadan</a>
+      <a href="calendar.html" class="active">📅 Calendar</a>
+      <a href="reminders.html">🔔 Reminders</a>
+      <a href="stats.html">📊 Stats</a>
+      <a href="about.html">💫 About</a>
+    </nav>
+    <div class="hdr-right">
+      <button class="icon-btn" id="themeBtn" title="Toggle theme">🌙</button>
+      <button class="hamburger" id="ham" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main class="page-main">
+
+<!-- HERO -->
+<div class="cal-hero">
+  <h1>📅 Islamic Calendar</h1>
+  <div class="hijri-big" id="hijriBig">۔۔۔</div>
+  <div class="greg-lbl" id="gregLbl">Loading...</div>
+</div>
+
+<div class="page-wrap">
+
+  <!-- MOON PHASE -->
+  <div class="moon-card">
+    <div class="moon-emoji" id="moonEmoji">🌕</div>
+    <div class="moon-name" id="moonName">Full Moon</div>
+    <div class="moon-sub" id="moonSub">Day 15 of Hijri month</div>
+  </div>
+
+  <!-- HIJRI YEAR INFO -->
+  <div class="year-card">
+    <div class="year-icon">☪️</div>
+    <div class="year-info">
+      <h3 id="yearTitle">Islamic Year 1447 AH</h3>
+      <p id="yearInfo">The Hijri calendar is a lunar calendar of 12 months in a year of 354 or 355 days. It began with the migration (Hijra) of Prophet Muhammad ﷺ from Mecca to Medina.</p>
+    </div>
+  </div>
+
+  <!-- HIJRI CALENDAR GRID -->
+  <div class="sec-head"><h2>🗓 Hijri Month</h2><p id="calMonthSub">Current Islamic month</p></div>
+  <div class="month-card">
+    <div class="month-nav">
+      <button id="prevMonth">◀</button>
+      <div class="month-title">
+        <span class="hm-name" id="calMonthAr">۔۔۔</span>
+        <span class="hm-en" id="calMonthEn">Loading...</span>
+      </div>
+      <button id="nextMonth">▶</button>
+    </div>
+    <div class="cal-grid" id="calGrid">
+      <div class="cal-day-hdr">Sun</div>
+      <div class="cal-day-hdr">Mon</div>
+      <div class="cal-day-hdr">Tue</div>
+      <div class="cal-day-hdr">Wed</div>
+      <div class="cal-day-hdr">Thu</div>
+      <div class="cal-day-hdr">Fri</div>
+      <div class="cal-day-hdr">Sat</div>
+    </div>
+  </div>
+
+  <!-- UPCOMING ISLAMIC EVENTS -->
+  <div class="sec-head"><h2>🌟 Upcoming Islamic Events</h2><p>Important dates of the Islamic year</p></div>
+  <div class="events-list" id="eventsList">
+    <div style="text-align:center;color:var(--text-muted);padding:30px">Loading events...</div>
+  </div>
+
+</div>
+</main>
+
+<script src="js/app.js?v=5"></script>
+<script>
+const q=s=>document.querySelector(s);
+const p2=n=>String(n).padStart(2,'0');
+
+// Hijri month names
+const HIJRI_MONTHS_AR=['محرم','صفر','ربیع الاول','ربیع الثانی','جمادی الاولیٰ','جمادی الثانیہ','رجب','شعبان','رمضان','شوال','ذوالقعدہ','ذوالحجہ'];
+const HIJRI_MONTHS_EN=['Muharram','Safar','Rabi al-Awwal','Rabi al-Thani','Jumada al-Ula','Jumada al-Thani','Rajab','Sha\'ban','Ramadan','Shawwal','Dhul Qa\'dah','Dhul Hijjah'];
+
+// Islamic events (Hijri month, day, name, urdu, icon, color)
+const ISLAMIC_EVENTS=[
+  {m:1,  d:1,  name:'Islamic New Year',        ur:'اسلامی نیا سال',       icon:'🎊', col:'teal'},
+  {m:1,  d:10, name:'Ashura — Fasting Day',    ur:'یوم عاشورہ',           icon:'🌊', col:'red'},
+  {m:3,  d:12, name:'Milad un Nabi ﷺ',         ur:'عید میلاد النبیؐ',     icon:'🌹', col:'green'},
+  {m:7,  d:27, name:'Isra wal Miraj',           ur:'اسراء و معراج',        icon:'✨', col:''},
+  {m:8,  d:15, name:'Shab-e-Barat',             ur:'شب برات',              icon:'🌙', col:'teal'},
+  {m:9,  d:1,  name:'Ramadan Begins',           ur:'ماہ رمضان شروع',       icon:'🌙', col:''},
+  {m:9,  d:27, name:'Laylatul Qadr (27th)',     ur:'شب قدر',               icon:'⭐', col:'teal'},
+  {m:10, d:1,  name:'Eid ul Fitr',              ur:'عید الفطر',            icon:'🎉', col:'green'},
+  {m:12, d:8,  name:'Hajj Begins',              ur:'حج شروع',              icon:'🕋', col:''},
+  {m:12, d:9,  name:'Day of Arafah',            ur:'یوم عرفہ',             icon:'🏔', col:'teal'},
+  {m:12, d:10, name:'Eid ul Adha',              ur:'عید الاضحی',           icon:'🐑', col:'green'},
+];
+
+let currentHijriYear=1447, currentHijriMonth=1;
+let todayHijri={year:1447,month:1,day:1};
+let gregOffset={}; // map hijri day -> gregorian date string
+
+async function init(){
+  const now=new Date();
+  q('#gregLbl').textContent=now.toLocaleDateString('en-US',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  try{
+    const url=`https://api.aladhan.com/v1/gToH/${p2(now.getDate())}-${p2(now.getMonth()+1)}-${now.getFullYear()}`;
+    const r=await fetch(url); const j=await r.json();
+    const h=j.data.hijri;
+    todayHijri={year:parseInt(h.year),month:parseInt(h.month.number),day:parseInt(h.day)};
+    currentHijriYear=todayHijri.year;
+    currentHijriMonth=todayHijri.month;
+    q('#hijriBig').textContent=`${h.day} ${h.month.ar} ${h.year} ہجری`;
+    q('#yearTitle').textContent=`Islamic Year ${h.year} AH`;
+    updateMoonPhase(parseInt(h.day));
+    renderCalendar();
+    renderEvents();
+  }catch{
+    q('#hijriBig').textContent='تاریخ لوڈ نہیں ہوئی';
+    renderEvents();
+  }
+}
+
+function updateMoonPhase(hijriDay){
+  const phases=[
+    {d:1,  e:'🌑',n:'New Moon',         s:'Crescent just began'},
+    {d:4,  e:'🌒',n:'Waxing Crescent',  s:'Moon is growing'},
+    {d:7,  e:'🌓',n:'First Quarter',    s:'Half moon visible'},
+    {d:10, e:'🌔',n:'Waxing Gibbous',   s:'Almost full'},
+    {d:14, e:'🌕',n:'Full Moon',         s:'Brightest night'},
+    {d:18, e:'🌖',n:'Waning Gibbous',   s:'Moon is fading'},
+    {d:22, e:'🌗',n:'Last Quarter',     s:'Half visible'},
+    {d:26, e:'🌘',n:'Waning Crescent',  s:'Nearing new moon'},
+  ];
+  let phase=phases[0];
+  for(const p of phases){ if(hijriDay>=p.d) phase=p; }
+  q('#moonEmoji').textContent=phase.e;
+  q('#moonName').textContent=phase.n;
+  q('#moonSub').textContent=`Day ${hijriDay} of Hijri month — ${phase.s}`;
+}
+
+async function renderCalendar(){
+  q('#calMonthAr').textContent=HIJRI_MONTHS_AR[currentHijriMonth-1];
+  q('#calMonthEn').textContent=`${HIJRI_MONTHS_EN[currentHijriMonth-1]} ${currentHijriYear} AH`;
+  q('#calMonthSub').textContent=`${HIJRI_MONTHS_EN[currentHijriMonth-1]} ${currentHijriYear}`;
+
+  // Get gregorian date for 1st of this hijri month
+  try{
+    const url=`https://api.aladhan.com/v1/hToG/01-${p2(currentHijriMonth)}-${currentHijriYear}`;
+    const r=await fetch(url); const j=await r.json();
+    const greg1=new Date(j.data.gregorian.date.split('-').reverse().join('-'));
+
+    // Month length: 29 or 30 days
+    const monthLen=currentHijriMonth%2===1?30:29;
+    const firstDow=greg1.getDay(); // 0=Sun
+
+    // Events for this month
+    const eventsThisMonth=ISLAMIC_EVENTS.filter(e=>e.m===currentHijriMonth).map(e=>e.d);
+
+    let html='<div class="cal-day-hdr">Sun</div><div class="cal-day-hdr">Mon</div><div class="cal-day-hdr">Tue</div><div class="cal-day-hdr">Wed</div><div class="cal-day-hdr">Thu</div><div class="cal-day-hdr">Fri</div><div class="cal-day-hdr">Sat</div>';
+
+    // Empty cells before
+    for(let i=0;i<firstDow;i++) html+=`<div class="cal-day empty"></div>`;
+
+    for(let d=1;d<=monthLen;d++){
+      const isToday=d===todayHijri.day&&currentHijriMonth===todayHijri.month&&currentHijriYear===todayHijri.year;
+      const dow=(firstDow+d-1)%7;
+      const isFri=dow===5;
+      const hasEv=eventsThisMonth.includes(d);
+      const gregDate=new Date(greg1); gregDate.setDate(greg1.getDate()+d-1);
+      const gregStr=gregDate.getDate();
+      html+=`<div class="cal-day ${isToday?'today':''} ${isFri?'friday':''} ${hasEv?'has-event':''}">
+        <span>${d}</span>
+        <span class="greg">${gregStr}</span>
+      </div>`;
+    }
+    q('#calGrid').innerHTML=html;
+  }catch{
+    q('#calGrid').innerHTML='<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:20px">Calendar unavailable offline</div>';
+  }
+}
+
+function renderEvents(){
+  // Calculate days until each event this year (approximate)
+  const now=new Date();
+  const todayMs=now.getTime();
+
+  // We'll estimate: each hijri month ~29.5 days
+  // Base: today's hijri day
+  const events=ISLAMIC_EVENTS.map(ev=>{
+    // Days from today's hijri date to event
+    let diffMonths=ev.m-todayHijri.month;
+    let diffDays=ev.d-todayHijri.day;
+    let totalDays=Math.round(diffMonths*29.5+diffDays);
+    if(totalDays<-15) totalDays+=354; // wrap to next year
+    const evDate=new Date(todayMs+totalDays*86400000);
+    const past=totalDays<0;
+    return{...ev,days:Math.abs(totalDays),past,evDate};
+  }).sort((a,b)=>a.past===b.past?a.days-b.days:(a.past?1:-1));
+
+  q('#eventsList').innerHTML=events.map(ev=>`
+    <div class="event-card ${ev.col}">
+      <div class="event-icon">${ev.icon}</div>
+      <div class="event-info">
+        <div class="event-name">${ev.name}</div>
+        <div class="event-name-ur">${ev.ur}</div>
+        <div class="event-date">${HIJRI_MONTHS_EN[ev.m-1]} ${ev.d} AH · ${ev.evDate.toLocaleDateString('en-US',{day:'numeric',month:'short'})}</div>
+      </div>
+      <div class="event-cd">
+        ${ev.past
+          ? `<div class="days past">✓ Done</div>`
+          : ev.days===0
+          ? `<div class="days" style="color:var(--teal)">Today!</div>`
+          : `<div class="days">${ev.days}</div><div class="dlbl">days left</div>`
+        }
+      </div>
+    </div>`).join('');
+}
+
+// Month navigation
+q('#prevMonth').addEventListener('click',()=>{
+  currentHijriMonth--;
+  if(currentHijriMonth<1){currentHijriMonth=12;currentHijriYear--;}
+  renderCalendar();
+});
+q('#nextMonth').addEventListener('click',()=>{
+  currentHijriMonth++;
+  if(currentHijriMonth>12){currentHijriMonth=1;currentHijriYear++;}
+  renderCalendar();
+});
+
+init();
+</script>
+</body>
+</html>

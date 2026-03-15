@@ -1,29 +1,24 @@
 {
-    "name": "Azis Zikr",
-    "short_name": "Zikr",
-    "description": "A simple, peaceful digital zikr counter for the Ummah.",
-    "start_url": "/index.html",
-    "scope": "/",
-    "display": "standalone",
-    "orientation": "portrait",
-    "background_color": "#000000",
-    "theme_color": "#00ffb3",
-    "categories": [
-        "lifestyle",
-        "utilities"
-    ],
-    "icons": [
-        {
-            "src": "assets/icons/icon-192.png",
-            "sizes": "192x192",
-            "type": "image/png",
-            "purpose": "any maskable"
-        },
-        {
-            "src": "assets/icons/icon-512.png",
-            "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "any maskable"
-        }
-    ]
+  "name": "Azis Zikr — Digital Tasbih",
+  "short_name": "Azis Zikr",
+  "description": "Islamic Tasbih, Quran, Prayer Times, 99 Names, Duas, Ramadan tracker, Islamic Calendar & Reminders",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#05050a",
+  "theme_color": "#c9a84c",
+  "orientation": "portrait",
+  "icons": [
+    {"src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ],
+  "categories": ["lifestyle", "religion", "utilities"],
+  "lang": "ur",
+  "shortcuts": [
+    {"name": "Tasbih Counter", "short_name": "Tasbih",   "url": "/index.html",      "icons": [{"src": "assets/icons/icon-192.png", "sizes": "192x192"}]},
+    {"name": "Prayer Times",   "short_name": "Namaz",    "url": "/prayer.html",     "icons": [{"src": "assets/icons/icon-192.png", "sizes": "192x192"}]},
+    {"name": "Reminders",      "short_name": "Remind",   "url": "/reminders.html",  "icons": [{"src": "assets/icons/icon-192.png", "sizes": "192x192"}]},
+    {"name": "Ramadan",        "short_name": "Ramadan",  "url": "/ramadan.html",    "icons": [{"src": "assets/icons/icon-192.png", "sizes": "192x192"}]},
+    {"name": "Islamic Calendar","short_name": "Calendar", "url": "/calendar.html",  "icons": [{"src": "assets/icons/icon-192.png", "sizes": "192x192"}]}
+  ]
 }

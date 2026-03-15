@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><script>if("serviceWorker"in navigator){navigator.serviceWorker.getRegistrations().then(r=>r.forEach(x=>x.unregister()));if(window.caches)caches.keys().then(k=>k.forEach(x=>caches.delete(x)));}</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
+<title>Azis Zikr — Reminders</title>
+<link rel="stylesheet" href="css/style.css?v=5">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#c9a84c">
+<style>
+.rem-hero{text-align:center;padding:50px 20px 24px}
+.rem-hero h1{font-family:'Cinzel Decorative',serif;font-size:clamp(18px,5vw,24px);background:linear-gradient(135deg,#f0d488,#00e8a2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+.rem-hero p{color:var(--text-muted);font-size:13px}
+
+/* PERMISSION BANNER */
+.perm-banner{display:none;background:linear-gradient(135deg,rgba(201,168,76,.12),rgba(0,232,162,.06));border:1px solid var(--gold);border-radius:var(--radius-lg);padding:16px 18px;margin-bottom:16px;text-align:center}
+.perm-banner.show{display:block}
+.perm-banner p{font-size:13px;color:var(--text-muted);margin-bottom:10px}
+.perm-btn{background:linear-gradient(135deg,var(--gold),var(--teal));color:#000;border:none;border-radius:100px;padding:10px 24px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .2s}
+.perm-btn:hover{opacity:.85}
+.perm-status{font-size:12px;margin-top:8px;font-weight:600}
+.perm-status.granted{color:var(--teal)}
+.perm-status.denied{color:#e8655a}
+
+/* REMINDER CARD */
+.rem-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;margin-bottom:12px;transition:border-color .3s}
+.rem-card.enabled{border-color:var(--gold);background:rgba(201,168,76,.04)}
+.rem-card-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.rem-icon{font-size:28px;flex-shrink:0}
+.rem-title{flex:1}
+.rem-title h3{font-family:'Cinzel',serif;font-size:13px;color:var(--gold-lt);margin-bottom:2px}
+.rem-title p{font-size:11px;color:var(--text-muted)}
+.rem-toggle{position:relative;width:44px;height:24px;flex-shrink:0}
+.rem-toggle input{opacity:0;width:0;height:0;position:absolute}
+.rem-slider{position:absolute;inset:0;background:var(--border);border-radius:100px;cursor:pointer;transition:background .3s}
+.rem-slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .3s}
+.rem-toggle input:checked+.rem-slider{background:linear-gradient(135deg,var(--gold),var(--teal))}
+.rem-toggle input:checked+.rem-slider::before{transform:translateX(20px)}
+
+.rem-options{display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--border);padding-top:14px}
+.rem-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.rem-row label{font-size:12px;color:var(--text-muted)}
+.time-input{background:var(--surface-2,rgba(255,255,255,.05));border:1px solid var(--border);color:var(--text);border-radius:8px;padding:6px 10px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;outline:none;transition:border-color .2s;width:100px;text-align:center}
+.time-input:focus{border-color:var(--gold)}
+.select-input{background:var(--surface-2,rgba(255,255,255,.05));border:1px solid var(--border);color:var(--text);border-radius:8px;padding:6px 10px;font-family:'Poppins',sans-serif;font-size:12px;outline:none;cursor:pointer;transition:border-color .2s}
+.select-input:focus{border-color:var(--gold)}
+.rem-msg-input{width:100%;background:var(--surface-2,rgba(255,255,255,.05));border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px 12px;font-family:'Poppins',sans-serif;font-size:12px;outline:none;resize:none;transition:border-color .2s}
+.rem-msg-input:focus{border-color:var(--gold)}
+.test-btn{background:var(--surface);border:1px solid var(--border);color:var(--text-muted);border-radius:8px;padding:7px 14px;font-size:11px;font-family:'Poppins',sans-serif;cursor:pointer;transition:all .2s;white-space:nowrap}
+.test-btn:hover{border-color:var(--teal);color:var(--teal)}
+
+/* SCHEDULE LIST */
+.schedule-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:16px}
+.schedule-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border)}
+.schedule-item:last-child{border-bottom:none}
+.sch-time{font-family:'Cinzel',serif;font-size:16px;color:var(--gold-lt);font-weight:700;min-width:60px}
+.sch-info{flex:1}
+.sch-name{font-size:12px;color:var(--text);font-weight:600}
+.sch-sub{font-size:10px;color:var(--text-muted)}
+.sch-dot{width:8px;height:8px;border-radius:50%;background:var(--border);flex-shrink:0}
+.sch-dot.on{background:var(--teal);box-shadow:0 0 8px rgba(0,232,162,.5)}
+
+/* DAILY ZIKR GOAL */
+.goal-card{background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(0,232,162,.04));border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;margin-bottom:16px}
+.goal-card h3{font-family:'Cinzel',serif;font-size:13px;color:var(--gold-lt);margin-bottom:12px}
+.goal-slider-wrap{display:flex;align-items:center;gap:12px}
+.goal-slider{flex:1;-webkit-appearance:none;appearance:none;height:4px;background:var(--border);border-radius:2px;outline:none}
+.goal-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--teal));cursor:pointer;box-shadow:0 0 10px var(--gold-glow)}
+.goal-val{font-family:'Cinzel',serif;font-size:18px;color:var(--gold-lt);font-weight:700;min-width:55px;text-align:right}
+
+/* TIPS */
+.tip-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:8px;display:flex;gap:12px;align-items:flex-start}
+.tip-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.tip-txt{font-size:12px;color:var(--text-muted);line-height:1.6}
+.tip-txt strong{color:var(--text);display:block;margin-bottom:2px;font-size:12px}
+</style>
+</head>
+<body>
+<canvas id="particles"></canvas>
+<div class="page-overlay"></div>
+
+<!-- HEADER -->
+<header class="header" id="siteHeader">
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <img src="assets/logo.svg" alt="">
+      <div class="logo-text"><span class="brand">Azis Zikr</span><span class="tagline">Reminders</span></div>
+    </a>
+    <nav class="nav" id="navMenu">
+      <a href="index.html">🏠 Zikr</a>
+      <a href="quran.html">📖 Quran</a>
+      <a href="prayer.html">🕌 Prayer</a>
+      <a href="duas.html">🤲 Duas</a>
+      <a href="asmaul.html">✨ 99 Names</a>
+      <a href="ramadan.html">🌙 Ramadan</a>
+      <a href="calendar.html">📅 Calendar</a>
+      <a href="reminders.html" class="active">🔔 Reminders</a>
+      <a href="stats.html">📊 Stats</a>
+      <a href="about.html">💫 About</a>
+    </nav>
+    <div class="hdr-right">
+      <button class="icon-btn" id="themeBtn" title="Toggle theme">🌙</button>
+      <button class="hamburger" id="ham" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main class="page-main">
+<div class="rem-hero">
+  <h1>🔔 Reminders</h1>
+  <p>Set daily zikr alarms & Islamic notifications — Jabalpur prayer times used</p>
+</div>
+
+<div class="page-wrap">
+
+  <!-- PERMISSION BANNER -->
+  <div class="perm-banner" id="permBanner">
+    <p>🔔 Enable browser notifications to receive prayer & zikr reminders</p>
+    <button class="perm-btn" id="permBtn">Allow Notifications</button>
+    <div class="perm-status" id="permStatus"></div>
+  </div>
+
+  <!-- DAILY ZIKR GOAL -->
+  <div class="goal-card">
+    <h3>🎯 Daily Zikr Goal</h3>
+    <div class="goal-slider-wrap">
+      <input type="range" class="goal-slider" id="goalSlider" min="33" max="1000" step="33" value="99">
+      <div class="goal-val" id="goalVal">99</div>
+    </div>
+    <div style="font-size:11px;color:var(--text-muted);margin-top:8px" id="goalLabel">SubhanAllah × 33, Alhamdulillah × 33, Allahu Akbar × 33</div>
+  </div>
+
+  <!-- REMINDER CARDS -->
+  <div class="sec-head"><h2>⏰ Scheduled Reminders</h2><p>Tap to enable — notifications sent at set times</p></div>
+
+  <!-- FAJR REMINDER -->
+  <div class="rem-card" id="remFajr">
+    <div class="rem-card-head">
+      <div class="rem-icon">🌅</div>
+      <div class="rem-title">
+        <h3>Fajr Wake-Up Alarm</h3>
+        <p>Wake up before Fajr with a gentle reminder</p>
+      </div>
+      <label class="rem-toggle"><input type="checkbox" id="togFajr"><span class="rem-slider"></span></label>
+    </div>
+    <div class="rem-options">
+      <div class="rem-row">
+        <label>Alarm time</label>
+        <input type="time" class="time-input" id="timeFajr" value="04:45">
+      </div>
+      <div class="rem-row">
+        <label>Custom message</label>
+        <button class="test-btn" onclick="testNotif('🌅 Fajr Alert','Allahu Akbar! Time for Fajr prayer — wake up & make wudu.')">Test 🔔</button>
+      </div>
+      <textarea class="rem-msg-input" id="msgFajr" rows="2">🌅 Allahu Akbar! Fajr time is approaching — wake up & make wudu.</textarea>
+    </div>
+  </div>
+
+  <!-- MORNING ZIKR -->
+  <div class="rem-card" id="remMorning">
+    <div class="rem-card-head">
+      <div class="rem-icon">☀️</div>
+      <div class="rem-title">
+        <h3>Morning Zikr Reminder</h3>
+        <p>Daily morning adhkar after Fajr</p>
+      </div>
+      <label class="rem-toggle"><input type="checkbox" id="togMorning"><span class="rem-slider"></span></label>
+    </div>
+    <div class="rem-options">
+      <div class="rem-row">
+        <label>Reminder time</label>
+        <input type="time" class="time-input" id="timeMorning" value="06:30">
+      </div>
+      <div class="rem-row">
+        <label>Test</label>
+        <button class="test-btn" onclick="testNotif('☀️ Morning Zikr','SubhanAllah × 33, Alhamdulillah × 33, Allahu Akbar × 34')">Test 🔔</button>
+      </div>
+      <textarea class="rem-msg-input" id="msgMorning" rows="2">☀️ SubhanAllah! Start your day with morning adhkar — open Azis Zikr.</textarea>
+    </div>
+  </div>
+
+  <!-- DHUHR REMINDER -->
+  <div class="rem-card" id="remDhuhr">
+    <div class="rem-card-head">
+      <div class="rem-icon">🌞</div>
+      <div class="rem-title">
+        <h3>Dhuhr Prayer Reminder</h3>
+        <p>Midday prayer notification — Jabalpur time</p>
+      </div>
+      <label class="rem-toggle"><input type="checkbox" id="togDhuhr"><span class="rem-slider"></span></label>
+    </div>
+    <div class="rem-options">
+      <div class="rem-row">
+        <label>Reminder time</label>
+        <input type="time" class="time-input" id="timeDhuhr" value="12:30">
+      </div>
+      <div class="rem-row">
+        <label>Test</label>
+        <button class="test-btn" onclick="testNotif('🌞 Dhuhr Time','Hayya ala-Salah! Dhuhr prayer time in Jabalpur.')">Test 🔔</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ASR REMINDER -->
+  <div class="rem-card" id="remAsr">
+    <div class="rem-card-head">
+      <div class="rem-icon">🌤</div>
+      <div class="rem-title">
+        <h3>Asr Prayer Reminder</h3>
+        <p>Afternoon prayer — don't miss it</p>
+      </div>
+      <label class="rem-toggle"><input type="checkbox" id="togAsr"><span class="rem-slider"></span></label>
+    </div>
+    <div class="rem-options">
+      <div class="rem-row">
+        <label>Reminder time</label>
+        <input type="time" class="time-input" id="timeAsr" value="15:30">
+      </div>
+      <div class="rem-row">
+        <label>Test</label>
+        <button class="test-btn" onclick="testNotif('🌤 Asr Time','Hayya ala-Salah! Asr prayer time in Jabalpur.')">Test 🔔</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAGHRIB REMINDER -->
+  <div class="rem-card" id="remMaghrib">
+    <div class="rem-card-head">
+      <div class="rem-icon">🌆</div>
+      <div class="rem-title">
+        <h3>Maghrib Reminder</h3>
+        <p>Evening prayer at sunset</p>
+      </div>
+      <label class="rem-toggle"><input type="checkbox" id="togMaghrib"><span class="rem-slider"></span></label>
+    </div>
+    <div class="rem-options">
+      <div class="rem-row">
+        <label>Reminder time</label>
+        <input type="time" class="time-input" id="timeMaghrib" value="18:30">
+      </div>
+      <div class="rem-row">
+        <label>Test</label>
+        <button class="test-btn" onclick="testNotif('🌆 Maghrib Time','Hayya ala-Salah! Maghrib prayer time in Jabalpur.')">Test 🔔</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EVENING ZIKR -->
+  <div class="rem-card" id="remEvening">
+    <div class="rem-card-head">
+      <div class="rem-icon">🌙</div>
+      <div class="rem-title">
+        <h3>Evening Adhkar Reminder</h3>
+        <p>After Maghrib evening remembrance</p>
+      </div>
+      <label class="rem-toggle"><input type="checkbox" id="togEvening"><span class="rem-slider"></span></label>
+    </div>
+    <div class="rem-options">
+      <div class="rem-row">
+        <label>Reminder time</label>
+        <input type="time" class="time-input" id="timeEvening" value="19:00">
+      </div>
+      <div class="rem-row">
+        <label>Test</label>
+        <button class="test-btn" onclick="testNotif('🌙 Evening Zikr','Astaghfirullah! Time for evening adhkar — open Azis Zikr.')">Test 🔔</button>
+      </div>
+      <textarea class="rem-msg-input" id="msgEvening" rows="2">🌙 Astaghfirullah! Time for evening adhkar — open Azis Zikr now.</textarea>
+    </div>
+  </div>
+
+  <!-- ISHA REMINDER -->
+  <div class="rem-card" id="remIsha">
+    <div class="rem-card-head">
+      <div class="rem-icon">⭐</div>
+      <div class="rem-title">
+        <h3>Isha Prayer Reminder</h3>
+        <p>Night prayer — complete your 5 daily prayers</p>
+      </div>
+      <label class="rem-toggle"><input type="checkbox" id="togIsha"><span class="rem-slider"></span></label>
+    </div>
+    <div class="rem-options">
+      <div class="rem-row">
+        <label>Reminder time</label>
+        <input type="time" class="time-input" id="timeIsha" value="20:00">
+      </div>
+      <div class="rem-row">
+        <label>Test</label>
+        <button class="test-btn" onclick="testNotif('⭐ Isha Time','Hayya ala-Salah! Isha prayer time in Jabalpur.')">Test 🔔</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CUSTOM REMINDER -->
+  <div class="rem-card" id="remCustom">
+    <div class="rem-card-head">
+      <div class="rem-icon">✏️</div>
+      <div class="rem-title">
+        <h3>Custom Reminder</h3>
+        <p>Set your own personal Islamic reminder</p>
+      </div>
+      <label class="rem-toggle"><input type="checkbox" id="togCustom"><span class="rem-slider"></span></label>
+    </div>
+    <div class="rem-options">
+      <div class="rem-row">
+        <label>Time</label>
+        <input type="time" class="time-input" id="timeCustom" value="21:00">
+      </div>
+      <div class="rem-row">
+        <label>Repeat</label>
+        <select class="select-input" id="repeatCustom">
+          <option value="daily">Every day</option>
+          <option value="fri">Fridays only</option>
+          <option value="weekday">Weekdays</option>
+        </select>
+      </div>
+      <textarea class="rem-msg-input" id="msgCustom" rows="2" placeholder="Your custom reminder message...">📿 SubhanAllah! Time for your daily zikr — tap to open Azis Zikr.</textarea>
+    </div>
+  </div>
+
+  <!-- TODAY'S SCHEDULE -->
+  <div class="sec-head" style="margin-top:28px"><h2>📋 Today's Schedule</h2><p id="scheduleCount">No reminders enabled</p></div>
+  <div class="schedule-wrap" id="scheduleList">
+    <div class="schedule-item"><span style="color:var(--text-muted);font-size:12px;padding:8px 0">Enable reminders above to see your daily schedule</span></div>
+  </div>
+
+  <!-- TIPS -->
+  <div class="sec-head" style="margin-top:28px"><h2>💡 Tips</h2></div>
+  <div class="tip-card">
+    <div class="tip-icon">📱</div>
+    <div class="tip-txt"><strong>Browser Notifications</strong>Keep this app open or installed as PWA for reminders to work. Add to Home Screen for best experience.</div>
+  </div>
+  <div class="tip-card">
+    <div class="tip-icon">🔔</div>
+    <div class="tip-txt"><strong>Allow Notifications</strong>Tap "Allow Notifications" above and accept the browser prompt. On iPhone, install as PWA first from Safari's share menu.</div>
+  </div>
+  <div class="tip-card">
+    <div class="tip-icon">🕌</div>
+    <div class="tip-txt"><strong>Prayer Times</strong>Prayer times are based on Jabalpur, Madhya Pradesh coordinates (23.18°N, 79.99°E) using University of Karachi method.</div>
+  </div>
+
+</div>
+</main>
+
+<script src="js/app.js?v=5"></script>
+<script>
+const q=s=>document.querySelector(s);
+
+// Storage keys
+const KEYS={
+  fajr:'rem_fajr', morning:'rem_morning', dhuhr:'rem_dhuhr',
+  asr:'rem_asr', maghrib:'rem_maghrib', evening:'rem_evening',
+  isha:'rem_isha', custom:'rem_custom', goal:'rem_goal'
+};
+
+// Load saved settings
+function loadSettings(){
+  const reminders=['fajr','morning','dhuhr','asr','maghrib','evening','isha','custom'];
+  reminders.forEach(id=>{
+    const saved=JSON.parse(localStorage.getItem(KEYS[id])||'null');
+    if(!saved) return;
+    const tog=q('#tog'+cap(id));
+    if(tog) tog.checked=saved.enabled||false;
+    const timeEl=q('#time'+cap(id));
+    if(timeEl&&saved.time) timeEl.value=saved.time;
+    const msgEl=q('#msg'+cap(id));
+    if(msgEl&&saved.msg) msgEl.value=saved.msg;
+    if(saved.enabled) q('#rem'+cap(id)).classList.add('enabled');
+  });
+  const goal=localStorage.getItem(KEYS.goal)||99;
+  q('#goalSlider').value=goal;
+  updateGoalLabel(parseInt(goal));
+}
+
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1)}
+
+function saveReminder(id){
+  const tog=q('#tog'+cap(id));
+  const timeEl=q('#time'+cap(id));
+  const msgEl=q('#msg'+cap(id));
+  const data={
+    enabled:tog?tog.checked:false,
+    time:timeEl?timeEl.value:'',
+    msg:msgEl?msgEl.value:''
+  };
+  localStorage.setItem(KEYS[id],JSON.stringify(data));
+  q('#rem'+cap(id)).classList.toggle('enabled',data.enabled);
+  updateSchedule();
+  if(data.enabled && Notification.permission==='granted'){
+    scheduleNotification(id,data);
+  }
+}
+
+// Attach listeners
+['fajr','morning','dhuhr','asr','maghrib','evening','isha','custom'].forEach(id=>{
+  const tog=q('#tog'+cap(id));
+  const timeEl=q('#time'+cap(id));
+  const msgEl=q('#msg'+cap(id));
+  if(tog) tog.addEventListener('change',()=>saveReminder(id));
+  if(timeEl) timeEl.addEventListener('change',()=>saveReminder(id));
+  if(msgEl) msgEl.addEventListener('input',()=>saveReminder(id));
+});
+
+// Permission
+function checkPermission(){
+  if(!('Notification' in window)){
+    q('#permBanner').classList.add('show');
+    q('#permStatus').textContent='❌ Notifications not supported in this browser';
+    q('#permStatus').className='perm-status denied';
+    return;
+  }
+  if(Notification.permission==='default'){
+    q('#permBanner').classList.add('show');
+  } else if(Notification.permission==='granted'){
+    q('#permStatus').textContent='✅ Notifications enabled';
+    q('#permStatus').className='perm-status granted';
+    q('#permBanner').classList.add('show');
+  } else {
+    q('#permBanner').classList.add('show');
+    q('#permStatus').textContent='❌ Notifications blocked — check browser settings';
+    q('#permStatus').className='perm-status denied';
+  }
+}
+
+q('#permBtn').addEventListener('click',async()=>{
+  if(!('Notification' in window)) return;
+  const result=await Notification.requestPermission();
+  if(result==='granted'){
+    q('#permStatus').textContent='✅ Notifications enabled!';
+    q('#permStatus').className='perm-status granted';
+    q('#permBtn').textContent='✅ Allowed';
+    new Notification('🕌 Azis Zikr',{body:'Notifications enabled! May Allah bless your ibadah.',icon:'assets/icons/icon-192.png'});
+  } else {
+    q('#permStatus').textContent='❌ Permission denied — enable in browser settings';
+    q('#permStatus').className='perm-status denied';
+  }
+});
+
+function testNotif(title,body){
+  if(Notification.permission!=='granted'){
+    alert('Enable notifications first!');
+    return;
+  }
+  new Notification(title,{body,icon:'assets/icons/icon-192.png'});
+}
+
+function scheduleNotification(id,data){
+  // Web notifications can only fire when page is open
+  // We schedule them via setTimeout for the current session
+  const[h,m]=data.time.split(':').map(Number);
+  const now=new Date();
+  const target=new Date(now.getFullYear(),now.getMonth(),now.getDate(),h,m,0);
+  if(target<=now) target.setDate(target.getDate()+1);
+  const ms=target-now;
+  const label={
+    fajr:'🌅 Fajr Reminder', morning:'☀️ Morning Zikr', dhuhr:'🌞 Dhuhr Reminder',
+    asr:'🌤 Asr Reminder', maghrib:'🌆 Maghrib Reminder', evening:'🌙 Evening Adhkar',
+    isha:'⭐ Isha Reminder', custom:'📿 Azis Zikr'
+  }[id]||'🕌 Azis Zikr';
+  const body=data.msg||`Time for ${id} — open Azis Zikr`;
+  setTimeout(()=>{
+    if(Notification.permission==='granted'){
+      new Notification(label,{body,icon:'assets/icons/icon-192.png'});
+    }
+  },ms);
+}
+
+function updateSchedule(){
+  const reminders=[
+    {id:'fajr',name:'Fajr Wake-Up',icon:'🌅'},
+    {id:'morning',name:'Morning Zikr',icon:'☀️'},
+    {id:'dhuhr',name:'Dhuhr Prayer',icon:'🌞'},
+    {id:'asr',name:'Asr Prayer',icon:'🌤'},
+    {id:'maghrib',name:'Maghrib Prayer',icon:'🌆'},
+    {id:'evening',name:'Evening Adhkar',icon:'🌙'},
+    {id:'isha',name:'Isha Prayer',icon:'⭐'},
+    {id:'custom',name:'Custom Reminder',icon:'✏️'},
+  ];
+  const enabled=reminders.map(r=>{
+    const saved=JSON.parse(localStorage.getItem(KEYS[r.id])||'null');
+    if(!saved||!saved.enabled) return null;
+    return{...r,time:saved.time||'00:00'};
+  }).filter(Boolean).sort((a,b)=>a.time.localeCompare(b.time));
+
+  q('#scheduleCount').textContent=enabled.length?`${enabled.length} reminder${enabled.length>1?'s':''} active today`:'No reminders enabled';
+  q('#scheduleList').innerHTML=enabled.length
+    ? enabled.map(r=>`
+        <div class="schedule-item">
+          <div class="sch-time">${r.time}</div>
+          <div class="sch-info">
+            <div class="sch-name">${r.icon} ${r.name}</div>
+            <div class="sch-sub">Daily reminder</div>
+          </div>
+          <div class="sch-dot on"></div>
+        </div>`).join('')
+    : '<div class="schedule-item"><span style="color:var(--text-muted);font-size:12px">Enable reminders above to see your schedule</span></div>';
+}
+
+function updateGoalLabel(val){
+  q('#goalVal').textContent=val;
+  const labels={33:'SubhanAllah × 33',99:'SubhanAllah × 33, Alhamdulillah × 33, Allahu Akbar × 33',100:'100 dhikr — a blessed round',500:'Intense ibadah day',1000:'Dedicated worship session'};
+  let lbl='Daily zikr goal set';
+  const keys=Object.keys(labels).map(Number).sort((a,b)=>a-b);
+  for(const k of keys){ if(val>=k) lbl=labels[k]; }
+  q('#goalLabel').textContent=lbl;
+  localStorage.setItem(KEYS.goal,val);
+}
+
+q('#goalSlider').addEventListener('input',e=>updateGoalLabel(parseInt(e.target.value)));
+
+// Init
+checkPermission();
+loadSettings();
+updateSchedule();
+</script>
+</body>
+</html>

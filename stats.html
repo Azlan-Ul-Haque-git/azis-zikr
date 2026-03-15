@@ -1,425 +1,233 @@
 <!DOCTYPE html>
 <html lang="en">
+<head><script>if("serviceWorker"in navigator){navigator.serviceWorker.getRegistrations().then(r=>r.forEach(x=>x.unregister()));if(window.caches)caches.keys().then(k=>k.forEach(x=>caches.delete(x)));}</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
+<title>Azis Zikr — My Stats</title>
+<link rel="stylesheet" href="css/style.css?v=5">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#c9a84c">
+<style>
+.stats-hero{text-align:center;padding:50px 20px 30px}
+.stats-hero h1{font-family:'Cinzel',serif;font-size:clamp(22px,5vw,32px);background:linear-gradient(135deg,var(--gold-lt),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+.stats-hero p{color:var(--text-muted);font-size:14px}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Azis Zikr — My Stats</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#c9a84c">
-    <style>
-        .stats-hero {
-            text-align: center;
-            padding: 50px 20px 30px
-        }
+.big-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:0 0 20px}
+.big-stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 18px;text-align:center;transition:all .25s}
+.big-stat:hover{border-color:rgba(201,168,76,.4);box-shadow:0 0 20px rgba(201,168,76,.08)}
+.big-stat .bs-icon{font-size:28px;margin-bottom:8px}
+.big-stat .bs-val{font-family:'Cinzel',serif;font-size:clamp(24px,6vw,36px);font-weight:700;color:var(--teal);text-shadow:0 0 16px var(--teal-glow);line-height:1}
+.big-stat .bs-lbl{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-top:5px}
+.big-stat.gold-stat .bs-val{color:var(--gold-lt);text-shadow:0 0 16px var(--gold-glow)}
 
-        .stats-hero h1 {
-            font-family: 'Cinzel', serif;
-            font-size: clamp(22px, 5vw, 32px);
-            background: linear-gradient(135deg, var(--gold-lt), var(--teal));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 8px
-        }
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;margin-bottom:14px}
+.chart-card h3{font-family:'Cinzel',serif;font-size:13px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:18px}
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:120px;padding-bottom:24px;position:relative}
+.bar-chart::after{content:'';position:absolute;bottom:24px;left:0;right:0;height:1px;background:var(--border2)}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;justify-content:flex-end;height:100%}
+.bar{width:100%;border-radius:4px 4px 0 0;background:linear-gradient(180deg,var(--teal),rgba(0,232,162,.4));min-height:2px;transition:height .5s var(--ease);position:relative;cursor:pointer}
+.bar:hover::after{content:attr(data-v);position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--gold);white-space:nowrap;background:var(--bg2);padding:2px 6px;border-radius:4px;border:1px solid var(--border)}
+.bar.today-bar{background:linear-gradient(180deg,var(--gold-lt),var(--gold))}
+.bar-lbl{font-size:9px;color:var(--text-muted);text-align:center}
 
-        .stats-hero p {
-            color: var(--text-muted);
-            font-size: 14px
-        }
+.zikr-breakdown{display:flex;flex-direction:column;gap:8px}
+.breakdown-row{display:flex;align-items:center;gap:12px}
+.bd-name{font-size:13px;color:var(--text);min-width:130px;font-family:'Amiri',serif;font-size:15px}
+.bd-bar-wrap{flex:1;height:8px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden}
+.bd-bar{height:100%;background:linear-gradient(90deg,var(--gold),var(--teal));border-radius:4px;transition:width .6s var(--ease)}
+.bd-cnt{font-family:'Cinzel',serif;font-size:12px;color:var(--teal);min-width:35px;text-align:right}
 
-        .big-stats {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin: 0 0 20px
-        }
+.achievements-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.achievement{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:16px 10px;text-align:center;transition:all .25s;position:relative;overflow:hidden}
+.achievement.earned{border-color:var(--gold);background:var(--gold-glass);box-shadow:0 0 14px rgba(201,168,76,.1)}
+.achievement.locked{opacity:.45;filter:grayscale(.8)}
+.achievement .ach-icon{font-size:28px;margin-bottom:6px}
+.achievement .ach-name{font-size:10px;color:var(--text-muted);letter-spacing:.5px;line-height:1.3}
+.achievement.earned .ach-name{color:var(--gold-lt)}
+.achievement .ach-check{position:absolute;top:6px;right:8px;font-size:11px;color:var(--teal)}
 
-        .big-stat {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 22px 18px;
-            text-align: center;
-            transition: all .25s
-        }
-
-        .big-stat:hover {
-            border-color: rgba(201, 168, 76, .4);
-            box-shadow: 0 0 20px rgba(201, 168, 76, .08)
-        }
-
-        .big-stat .bs-icon {
-            font-size: 28px;
-            margin-bottom: 8px
-        }
-
-        .big-stat .bs-val {
-            font-family: 'Cinzel', serif;
-            font-size: clamp(24px, 6vw, 36px);
-            font-weight: 700;
-            color: var(--teal);
-            text-shadow: 0 0 16px var(--teal-glow);
-            line-height: 1
-        }
-
-        .big-stat .bs-lbl {
-            font-size: 11px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 5px
-        }
-
-        .big-stat.gold-stat .bs-val {
-            color: var(--gold-lt);
-            text-shadow: 0 0 16px var(--gold-glow)
-        }
-
-        .chart-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 22px;
-            margin-bottom: 14px
-        }
-
-        .chart-card h3 {
-            font-family: 'Cinzel', serif;
-            font-size: 13px;
-            color: var(--gold);
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            margin-bottom: 18px
-        }
-
-        .bar-chart {
-            display: flex;
-            align-items: flex-end;
-            gap: 8px;
-            height: 120px;
-            padding-bottom: 24px;
-            position: relative
-        }
-
-        .bar-chart::after {
-            content: '';
-            position: absolute;
-            bottom: 24px;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: var(--border2)
-        }
-
-        .bar-wrap {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            justify-content: flex-end;
-            height: 100%
-        }
-
-        .bar {
-            width: 100%;
-            border-radius: 4px 4px 0 0;
-            background: linear-gradient(180deg, var(--teal), rgba(0, 232, 162, .4));
-            min-height: 2px;
-            transition: height .5s var(--ease);
-            position: relative;
-            cursor: pointer
-        }
-
-        .bar:hover::after {
-            content: attr(data-v);
-            position: absolute;
-            top: -22px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 10px;
-            color: var(--gold);
-            white-space: nowrap;
-            background: var(--bg2);
-            padding: 2px 6px;
-            border-radius: 4px;
-            border: 1px solid var(--border)
-        }
-
-        .bar.today-bar {
-            background: linear-gradient(180deg, var(--gold-lt), var(--gold))
-        }
-
-        .bar-lbl {
-            font-size: 9px;
-            color: var(--text-muted);
-            text-align: center
-        }
-
-        .zikr-breakdown {
-            display: flex;
-            flex-direction: column;
-            gap: 8px
-        }
-
-        .breakdown-row {
-            display: flex;
-            align-items: center;
-            gap: 12px
-        }
-
-        .bd-name {
-            font-size: 13px;
-            color: var(--text);
-            min-width: 130px;
-            font-family: 'Amiri', serif;
-            font-size: 15px
-        }
-
-        .bd-bar-wrap {
-            flex: 1;
-            height: 8px;
-            background: rgba(255, 255, 255, .05);
-            border-radius: 4px;
-            overflow: hidden
-        }
-
-        .bd-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--gold), var(--teal));
-            border-radius: 4px;
-            transition: width .6s var(--ease)
-        }
-
-        .bd-cnt {
-            font-family: 'Cinzel', serif;
-            font-size: 12px;
-            color: var(--teal);
-            min-width: 35px;
-            text-align: right
-        }
-
-        .achievements-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px
-        }
-
-        .achievement {
-            background: var(--surface);
-            border: 1px solid var(--border2);
-            border-radius: var(--radius);
-            padding: 16px 10px;
-            text-align: center;
-            transition: all .25s;
-            position: relative;
-            overflow: hidden
-        }
-
-        .achievement.earned {
-            border-color: var(--gold);
-            background: var(--gold-glass);
-            box-shadow: 0 0 14px rgba(201, 168, 76, .1)
-        }
-
-        .achievement.locked {
-            opacity: .45;
-            filter: grayscale(.8)
-        }
-
-        .achievement .ach-icon {
-            font-size: 28px;
-            margin-bottom: 6px
-        }
-
-        .achievement .ach-name {
-            font-size: 10px;
-            color: var(--text-muted);
-            letter-spacing: .5px;
-            line-height: 1.3
-        }
-
-        .achievement.earned .ach-name {
-            color: var(--gold-lt)
-        }
-
-        .achievement .ach-check {
-            position: absolute;
-            top: 6px;
-            right: 8px;
-            font-size: 11px;
-            color: var(--teal)
-        }
-
-        .reset-section {
-            text-align: center;
-            padding: 10px 0 20px
-        }
-    </style>
+.reset-section{text-align:center;padding:10px 0 20px}
+</style>
 </head>
-
 <body>
-    <canvas id="particles"></canvas>
-    <video id="bgVideo" autoplay muted loop playsinline>
-        <source src="assets/video/background.mp4" type="video/mp4">
-    </video>
-    <div class="page-overlay"></div>
+<canvas id="particles"></canvas>
+<video id="bgVideo" autoplay muted loop playsinline><source src="assets/video/background.mp4" type="video/mp4"></video>
+<div class="page-overlay"></div>
 
-    <header class="header" id="siteHeader">
-        <div class="header-inner">
-            <a href="index.html" class="logo">
-                <img src="assets/logo.svg" alt="">
-                <div class="logo-text"><span class="brand">Azis Zikr</span><span class="tagline">Digital Tasbih</span>
-                </div>
-            </a>
-            <nav class="nav" id="navMenu">
-                <a href="index.html">🏠 Zikr</a>
-                <a href="quran.html">📖 Quran</a>
-                <a href="prayer.html">🕌 Prayer</a>
-                <a href="stats.html">📊 Stats</a>
-                <a href="duas.html">🤲 Duas</a>
-                <a href="about.html">💫 About</a>
-            </nav>
-            <div class="hdr-right">
-                <button class="icon-btn" id="themeBtn">🌙</button>
-                <button class="hamburger" id="ham"><span></span><span></span><span></span></button>
-            </div>
-        </div>
-    </header>
-
-    <div class="stats-hero">
-        <h1>📊 My Zikr Stats</h1>
-        <p>Track your daily journey of remembrance</p>
+<header class="header" id="siteHeader">
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <img src="assets/logo.svg" alt="">
+      <div class="logo-text"><span class="brand">Azis Zikr</span><span class="tagline">Digital Tasbih</span></div>
+    </a>
+    <nav class="nav" id="navMenu">
+      <a href="index.html">🏠 Zikr</a>
+      <a href="quran.html">📖 Quran</a>
+      <a href="prayer.html">🕌 Prayer</a>
+      <a href="asmaul.html">✨ 99 Names</a>
+      <a href="ramadan.html">🌙 Ramadan</a>
+      <a href="calendar.html">📅 Calendar</a>
+      <a href="reminders.html">🔔 Reminders</a>
+      <a href="stats.html">📊 Stats</a>
+      <a href="duas.html">🤲 Duas</a>
+      <a href="about.html">💫 About</a>
+    </nav>
+    <div class="hdr-right">
+      <button class="icon-btn" id="themeBtn">🌙</button>
+      <button class="hamburger" id="ham"><span></span><span></span><span></span></button>
     </div>
+  </div>
+</header>
 
-    <div class="page-wrap">
+<div class="stats-hero">
+  <h1>📊 My Zikr Stats</h1>
+  <p>Track your daily journey of remembrance</p>
+</div>
 
-        <!-- BIG NUMBERS -->
-        <div class="big-stats">
-            <div class="big-stat gold-stat">
-                <div class="bs-icon">📿</div>
-                <div class="bs-val" id="s_total">0</div>
-                <div class="bs-lbl">Total Zikr</div>
-            </div>
-            <div class="big-stat">
-                <div class="bs-icon">🔥</div>
-                <div class="bs-val" id="s_streak">0</div>
-                <div class="bs-lbl">Day Streak</div>
-            </div>
-            <div class="big-stat">
-                <div class="bs-icon">🌙</div>
-                <div class="bs-val" id="s_today">0</div>
-                <div class="bs-lbl">Today</div>
-            </div>
-            <div class="big-stat">
-                <div class="bs-icon">🏆</div>
-                <div class="bs-val" id="s_best">0</div>
-                <div class="bs-lbl">Best Day</div>
-            </div>
-        </div>
+<div class="page-wrap">
 
-        <!-- 7-DAY CHART -->
-        <div class="chart-card">
-            <h3>📅 Last 7 Days</h3>
-            <div class="bar-chart" id="barChart"></div>
-        </div>
+  <!-- BIG NUMBERS -->
+  <div class="big-stats">
+    <div class="big-stat gold-stat"><div class="bs-icon">📿</div><div class="bs-val" id="s_total">0</div><div class="bs-lbl">Total Zikr</div></div>
+    <div class="big-stat"><div class="bs-icon">🔥</div><div class="bs-val" id="s_streak">0</div><div class="bs-lbl">Day Streak</div></div>
+    <div class="big-stat"><div class="bs-icon">🌙</div><div class="bs-val" id="s_today">0</div><div class="bs-lbl">Today</div></div>
+    <div class="big-stat"><div class="bs-icon">🏆</div><div class="bs-val" id="s_best">0</div><div class="bs-lbl">Best Day</div></div>
+  </div>
 
-        <!-- ZIKR BREAKDOWN -->
-        <div class="chart-card">
-            <h3>📿 Zikr Breakdown</h3>
-            <div class="zikr-breakdown" id="breakdown"></div>
-        </div>
+  <!-- 7-DAY CHART -->
+  <div class="chart-card">
+    <h3>📅 Last 7 Days</h3>
+    <div class="bar-chart" id="barChart"></div>
+  </div>
 
-        <!-- ACHIEVEMENTS -->
-        <div class="chart-card">
-            <h3>🏅 Achievements</h3>
-            <div class="achievements-grid" id="achGrid"></div>
-        </div>
-
-        <!-- RESET -->
-        <div class="reset-section">
-            <button class="btn btn-ghost" id="resetAllBtn">🗑️ Reset All Data</button>
-        </div>
-
+  <!-- 30-DAY HEATMAP -->
+  <div class="chart-card">
+    <h3>🔥 30-Day Activity</h3>
+    <div class="heatmap-grid" id="heatmap"></div>
+    <div class="hm-legend">
+      <span>Less</span>
+      <div class="hm-swatch" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);width:12px;height:12px;border-radius:3px;display:inline-block"></div>
+      <div class="hm-swatch" style="background:rgba(201,168,76,.2);width:12px;height:12px;border-radius:3px;display:inline-block"></div>
+      <div class="hm-swatch" style="background:rgba(201,168,76,.45);width:12px;height:12px;border-radius:3px;display:inline-block"></div>
+      <div class="hm-swatch" style="background:rgba(201,168,76,.75);width:12px;height:12px;border-radius:3px;display:inline-block"></div>
+      <span>More</span>
     </div>
+  </div>
 
-    <div id="netStatus"></div>
-    <footer class="footer">
-        <div class="footer-ticker">
-            <div class="footer-track">
-                <span>📊 Every zikr is recorded with Allah ﷻ</span>
-                <span>🌙 <em>فَاذْكُرُونِي أَذْكُرْكُمْ</em> — Remember Me, I will remember you</span>
-                <span>📿 Azis Zikr • Simple • Peaceful • Pure</span>
-                <span>📊 Every zikr is recorded with Allah ﷻ</span>
-                <span>🌙 <em>فَاذْكُرُونِي أَذْكُرْكُمْ</em> — Remember Me, I will remember you</span>
-                <span>📿 Azis Zikr • Simple • Peaceful • Pure</span>
-            </div>
-        </div>
-    </footer>
+  <!-- ZIKR BREAKDOWN -->
+  <div class="chart-card">
+    <h3>📿 Zikr Breakdown</h3>
+    <div class="zikr-breakdown" id="breakdown"></div>
+  </div>
 
-    <script src="js/app.js"></script>
-    <script>
-        const ACHS = [
-            { e: '🌱', n: 'First Zikr', t: 1 }, { e: '🌙', n: '33 Club', t: 33 }, { e: '⭐', n: '99 Names', t: 99 },
-            { e: '💯', n: 'Century', t: 100 }, { e: '🔮', n: '500 Zikr', t: 500 }, { e: '👑', n: '1K Zikr', t: 1000 },
-            { e: '💎', n: '5K Zikr', t: 5000 }, { e: '🕌', n: '10K Zikr', t: 10000 }, { e: '🌟', n: 'Legend', t: 50000 },
-        ];
-        document.addEventListener('DOMContentLoaded', () => {
-            // Big stats
-            const all = AZ.totalAll, today = AZ.todayCount, streak = AZ.streak;
-            q('#s_total').textContent = fmtNum(all);
-            q('#s_streak').textContent = streak;
-            q('#s_today').textContent = fmtNum(today);
-            // Best day
-            const hist = AZ.history;
-            const best = Object.values(hist).length ? Math.max(...Object.values(hist)) : 0;
-            q('#s_best').textContent = fmtNum(best);
+  <!-- ACHIEVEMENTS -->
+  <div class="chart-card">
+    <h3>🏅 Achievements</h3>
+    <div class="achievements-grid" id="achGrid"></div>
+  </div>
 
-            // Bar chart
-            const chart = q('#barChart'); const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-            const vals = []; let maxV = 0;
-            for (let i = 6; i >= 0; i--) { const d = dateShift(-i); const v = AZ.history[d] || 0; vals.push({ d, v }); if (v > maxV) maxV = v }
-            vals.forEach(({ d, v }) => {
-                const today = d === todayStr(), dow = new Date(d).getDay();
-                const wrap = document.createElement('div'); wrap.className = 'bar-wrap';
-                const pct = maxV > 0 ? Math.max(4, Math.round((v / maxV) * 100)) : 4;
-                wrap.innerHTML = `<div class="bar ${today ? 'today-bar' : ''}" style="height:${pct}%" data-v="${fmtNum(v)}"></div><div class="bar-lbl">${days[dow]}</div>`;
-                chart.appendChild(wrap);
-            });
+  <!-- RESET -->
+  <div class="reset-section">
+    <button class="btn btn-ghost" id="resetAllBtn">🗑️ Reset All Data</button>
+  </div>
 
-            // Breakdown
-            const bd = q('#breakdown');
-            const zCounts = AZ.zikrCounts;
-            const sorted = Object.entries(zCounts).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]).slice(0, 8);
-            const maxZ = sorted.length ? sorted[0][1] : 1;
-            if (sorted.length === 0) { bd.innerHTML = '<p style="color:var(--text-muted);font-size:13px;text-align:center;padding:10px">No zikr recorded yet — start counting!</p>' }
-            else sorted.forEach(([name, cnt]) => {
-                const pct = Math.round((cnt / maxZ) * 100);
-                const row = document.createElement('div'); row.className = 'breakdown-row';
-                row.innerHTML = `<div class="bd-name">${name}</div><div class="bd-bar-wrap"><div class="bd-bar" style="width:${pct}%"></div></div><div class="bd-cnt">${fmtNum(cnt)}</div>`;
-                bd.appendChild(row);
-            });
+</div>
 
-            // Achievements
-            const ag = q('#achGrid');
-            ACHS.forEach(a => {
-                const earned = AZ.totalAll >= a.t;
-                const el = document.createElement('div');
-                el.className = `achievement ${earned ? 'earned' : 'locked'}`;
-                el.innerHTML = `${earned ? '<span class="ach-check">✓</span>' : ''}<div class="ach-icon">${a.e}</div><div class="ach-name">${a.n}<br><span style="color:var(--gold);font-size:9px">${fmtNum(a.t)}+</span></div>`;
-                ag.appendChild(el);
-            });
+<div id="netStatus"></div>
+<footer class="footer">
+  <div class="footer-ticker"><div class="footer-track">
+    <span>📊 Every zikr is recorded with Allah ﷻ</span>
+    <span>🌙 <em>فَاذْكُرُونِي أَذْكُرْكُمْ</em> — Remember Me, I will remember you</span>
+    <span>📿 Azis Zikr • Simple • Peaceful • Pure</span>
+    <span>📊 Every zikr is recorded with Allah ﷻ</span>
+    <span>🌙 <em>فَاذْكُرُونِي أَذْكُرْكُمْ</em> — Remember Me, I will remember you</span>
+    <span>📿 Azis Zikr • Simple • Peaceful • Pure</span>
+  </div></div>
+</footer>
 
-            // Reset
-            q('#resetAllBtn').addEventListener('click', () => {
-                if (confirm('⚠️ This will delete ALL your zikr data permanently. Are you sure?')) {
-                    localStorage.clear(); location.reload();
-                }
-            });
-        });
-    </script>
+<script src="js/app.js?v=5"></script>
+<script>
+const ACHS=[
+  {e:'🌱',n:'First Zikr',t:1},{e:'🌙',n:'33 Club',t:33},{e:'⭐',n:'99 Names',t:99},
+  {e:'💯',n:'Century',t:100},{e:'🔮',n:'500 Zikr',t:500},{e:'👑',n:'1K Zikr',t:1000},
+  {e:'💎',n:'5K Zikr',t:5000},{e:'🕌',n:'10K Zikr',t:10000},{e:'🌟',n:'Legend',t:50000},
+];
+document.addEventListener('DOMContentLoaded',()=>{
+  // Big stats
+  const all=AZ.totalAll, today=AZ.todayCount, streak=AZ.streak;
+  q('#s_total').textContent=fmtNum(all);
+  q('#s_streak').textContent=streak;
+  q('#s_today').textContent=fmtNum(today);
+  // Best day
+  const hist=AZ.history;
+  const best=Object.values(hist).length?Math.max(...Object.values(hist)):0;
+  q('#s_best').textContent=fmtNum(best);
+
+  // Bar chart
+  const chart=q('#barChart'); const days=['S','M','T','W','T','F','S'];
+  const vals=[]; let maxV=0;
+  for(let i=6;i>=0;i--){const d=dateShift(-i);const v=AZ.history[d]||0;vals.push({d,v});if(v>maxV)maxV=v}
+  vals.forEach(({d,v})=>{
+    const today=d===todayStr(), dow=new Date(d).getDay();
+    const wrap=document.createElement('div'); wrap.className='bar-wrap';
+    const pct=maxV>0?Math.max(4,Math.round((v/maxV)*100)):4;
+    wrap.innerHTML=`<div class="bar ${today?'today-bar':''}" style="height:${pct}%" data-v="${fmtNum(v)}"></div><div class="bar-lbl">${days[dow]}</div>`;
+    chart.appendChild(wrap);
+  });
+
+  // 30-day heatmap
+  const hm=q('#heatmap');
+  const hVals=[]; let hmMax=0;
+  for(let i=29;i>=0;i--){const d=dateShift(-i);const v=AZ.history[d]||0;hVals.push({d,v});if(v>hmMax)hmMax=v;}
+  hVals.forEach(({d,v})=>{
+    const cell=document.createElement('div');
+    const isToday=d===todayStr();
+    const dow=new Date(d);
+    const label=`${dow.toLocaleDateString('en-US',{month:'short',day:'numeric'})}: ${fmtNum(v)} zikr`;
+    let cls='hm-cell';
+    if(v>0){
+      const ratio=hmMax>0?v/hmMax:0;
+      if(ratio<0.33) cls+=' done-low';
+      else if(ratio<0.66) cls+=' done-mid';
+      else cls+=' done-high';
+    }
+    if(isToday) cls+=' today-cell';
+    cell.className=cls; cell.dataset.tip=label;
+    hm.appendChild(cell);
+  });
+
+  // Breakdown
+  const bd=q('#breakdown');
+  const zCounts=AZ.zikrCounts;
+  const sorted=Object.entries(zCounts).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const maxZ=sorted.length?sorted[0][1]:1;
+  if(sorted.length===0){bd.innerHTML='<p style="color:var(--text-muted);font-size:13px;text-align:center;padding:10px">No zikr recorded yet — start counting!</p>'}
+  else sorted.forEach(([name,cnt])=>{
+    const pct=Math.round((cnt/maxZ)*100);
+    const row=document.createElement('div'); row.className='breakdown-row';
+    row.innerHTML=`<div class="bd-name">${name}</div><div class="bd-bar-wrap"><div class="bd-bar" style="width:${pct}%"></div></div><div class="bd-cnt">${fmtNum(cnt)}</div>`;
+    bd.appendChild(row);
+  });
+
+  // Achievements
+  const ag=q('#achGrid');
+  ACHS.forEach(a=>{
+    const earned=AZ.totalAll>=a.t;
+    const el=document.createElement('div');
+    el.className=`achievement ${earned?'earned':'locked'}`;
+    el.innerHTML=`${earned?'<span class="ach-check">✓</span>':''}<div class="ach-icon">${a.e}</div><div class="ach-name">${a.n}<br><span style="color:var(--gold);font-size:9px">${fmtNum(a.t)}+</span></div>`;
+    ag.appendChild(el);
+  });
+
+  // Reset
+  q('#resetAllBtn').addEventListener('click',()=>{
+    if(confirm('⚠️ This will delete ALL your zikr data permanently. Are you sure?')){
+      localStorage.clear(); location.reload();
+    }
+  });
+});
+</script>
 </body>
-
 </html>
